@@ -1,0 +1,7 @@
+C:\Users\FirstOne\Source\Repos\aProof\aProof\bin\Release\aProof.exe.config
+C:\Users\FirstOne\Source\Repos\aProof\aProof\bin\Release\aProof.exe
+C:\Users\FirstOne\Source\Repos\aProof\aProof\bin\Release\aProof.pdb
+C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Release\aProof.csproj.CoreCompileInputs.cache
+C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Release\aProof.exe
+C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Release\aProof.pdb
+C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Release\aProof.csprojAssemblyReference.cache
