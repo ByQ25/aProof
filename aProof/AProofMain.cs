@@ -7,7 +7,7 @@ namespace aProof
 {
 	class AProofMain
 	{
-		private static readonly string dictionaryPath = "dictionary.csv";
+		private static readonly string dictionaryPath = @"..\..\dictionary.csv";
 
 		static void Main(string[] args)
 		{
