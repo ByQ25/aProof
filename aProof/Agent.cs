@@ -34,7 +34,7 @@ namespace aProof
 		}
 
 		// TODO: Remove testing empty constructor
-		public Agent() : this(new DictHandler("dictionary.csv"), new HashSet<string>(), new HashSet<string>()) { }
+		public Agent() : this(new DictHandler(@"..\..\dictionary.csv"), new HashSet<string>(), new HashSet<string>()) { }
 
 		private string ReturnSign()
 		{   // TODO: Remove "Random rng = new Random();"
