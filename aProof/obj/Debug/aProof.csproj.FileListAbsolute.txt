@@ -1,7 +1,0 @@
-C:\Users\FirstOne\Source\Repos\aProof\aProof\bin\Debug\aProof.exe.config
-C:\Users\FirstOne\Source\Repos\aProof\aProof\bin\Debug\aProof.exe
-C:\Users\FirstOne\Source\Repos\aProof\aProof\bin\Debug\aProof.pdb
-C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Debug\aProof.csproj.CoreCompileInputs.cache
-C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Debug\aProof.exe
-C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Debug\aProof.pdb
-C:\Users\FirstOne\Source\Repos\aProof\aProof\obj\Debug\aProof.csprojAssemblyReference.cache
