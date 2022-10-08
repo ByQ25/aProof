@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -78,17 +79,16 @@ namespace aProof
 		{
 			// Random rng = new Random();
 			StringBuilder output = new StringBuilder(256);
-			int maxWordsCount = (int)SimulationSettings.Default.MAX_WORDS_COUNT_FOR_RELATION;
-			int wordsCount = rng.Next(1, maxWordsCount + 1);
 			if (dictionary.Relations.Length > 0 && (dictionary.Vars.Length > 0 || dictionary.Nouns.Length > 0))
 			{
-				output.Append(dictionary.Relations[rng.Next(dictionary.Relations.Length)]);
+				KeyValuePair<string, uint> relation = dictionary.RelationsWithSizes.ElementAt(rng.Next(dictionary.RelationsWithSizes.Count));
+				output.Append(relation.Key);
 				output.Append("(");
-				for (int i = 0; i < wordsCount; ++i)
+				for (int i = 0; i < relation.Value; ++i)
 				{
 					output.Append(ReturnSign());
 					output.Append(GenerateSimpleSubExpr());
-					output.Append(i > wordsCount - 2 ? ")" : ", ");
+					output.Append(i > relation.Value - 2 ? ")" : ", ");
 				}
 			}
 			else output.Append(GenerateSimpleSubExpr());

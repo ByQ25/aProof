@@ -9,51 +9,78 @@ namespace aProof
 {
 	class DictHandler
 	{
-		private readonly List<string>[] dictionary;
+		private readonly string[][] dictionary;
 
-		public string[] Vars => dictionary[0].ToArray();
-		public string[] Nouns => dictionary[1].ToArray();
-		public string[] Relations => dictionary[2].ToArray();
+		public string[] Vars => dictionary[0];
+		public string[] Nouns => dictionary[1];
+		public string[] Relations => dictionary[2];
+		public string[] RelationsSizes => dictionary[3];
+		public Dictionary<string, uint> RelationsWithSizes { get; }
 
-		public DictHandler(string[] vars, string[] nouns, string[] relations)
+		public DictHandler(string[] vars, string[] nouns, string[] relations, string[] relationsSizes)
 		{
-			this.dictionary = new List<string>[3] {
-				vars.ToList<string>(),
-				nouns.ToList<string>(),
-				relations.ToList<string>(),
+			this.dictionary = new string[4][] {
+				vars,
+				nouns,
+				relations,
+				relationsSizes
 			};
+			this.RelationsWithSizes = CreateRelationsDictionary(relations, relationsSizes);
 		}
 
 		public DictHandler(string dictionaryPath)
 		{
-			try { this.dictionary = LoadDictionariesFromCsv(dictionaryPath); }
-			catch (DictHandlerException) { this.dictionary = new List<string>[3] { new List<string>(), new List<string>(), new List<string>() }; }
+			this.dictionary = LoadDictionariesFromCsv(dictionaryPath);
+			this.RelationsWithSizes = CreateRelationsDictionary(this.Relations, this.RelationsSizes);
 		}
 
-		private List<string>[] LoadDictionariesFromCsv(string path)
+		private string[][] LoadDictionariesFromCsv(string path)
 		{
-			List<string>[] dictionary = new List<string>[3];
+			string[][] dictionary = new string[4][];
 
 			if (File.Exists(path))
 				using (StreamReader sr = new StreamReader(path))
 				{
 					string input = sr.ReadToEnd();
 					string[] inSplit = input.Split('\n');
-					if (inSplit.Length > 2)
+
+					if (inSplit.Length > 3)
 					{
-						for (int i = 0; i < 3; ++i)
-							dictionary[i] = inSplit[i].TrimEnd('\r', ';').Split(';').ToList<string>();
+						for (int i = 0; i < 4; ++i)
+							dictionary[i] = inSplit[i].TrimEnd('\r', ';').Split(';');
+						if (dictionary[2].Length != dictionary[3].Length)
+							throw new DictHandlerException("Dictionary file is formatted incorrectly. Last two rows of data have to be the same size.");
 						return dictionary;
 					}
-					else throw new DictHandlerException("Dictionary file is formatted incorrectly.");
+					else throw new DictHandlerException("Dictionary file is formatted incorrectly. The dictionary require at least 4 data rows.");
 				}
 			else throw new DictHandlerException("No dictionary file.");
+		}
+
+		private uint[] ConvertSizesToUint(string[] sizesInStrings)
+		{
+			uint[] sizesInUints = new uint[sizesInStrings.Length];
+			for (int i = 0; i < sizesInStrings.Length; ++i)
+				if (uint.TryParse(sizesInStrings[i], out uint parsedUint) && parsedUint > 0) sizesInUints[i] = parsedUint;
+				else throw new DictHandlerException("Dictionary file is formatted incorrectly. Last row sould consist of positive numbers only.");
+			return sizesInUints;
+		}
+
+		private Dictionary<string, uint> CreateRelationsDictionary(string[] relations, string[] relationsSizes)
+		{
+			Dictionary<string, uint> relationsWithSizes = new Dictionary<string, uint>();
+			uint[] tempSizes = new uint[relationsSizes.Length];
+			tempSizes = ConvertSizesToUint(relationsSizes);
+			for (int i = 0; i < relations.Length; ++i)
+				if (!relationsWithSizes.ContainsKey(relations[i]))
+					relationsWithSizes.Add(relations[i], tempSizes[i]);
+			return relationsWithSizes;
 		}
 
 		public string SerilizeToCsv()
 		{
 			StringBuilder sb = new StringBuilder(4096);
-			foreach (List<string> list in dictionary)
+			foreach (string[] list in dictionary)
 			{
 				foreach (string item in list)
 				{
@@ -70,7 +97,7 @@ namespace aProof
 		{
 			Regex regex = new Regex(@"(\w+)");
 			MatchCollection matches = regex.Matches(input);
-			List<string> additional = new List<string> { "exists", "all", "assign"};
+			string[] additional = new string[] { "exists", "all", "assign"};
 
 			foreach (Match match in matches)
 			{
@@ -91,7 +118,7 @@ namespace aProof
 			HashSet<string> words = new HashSet<string>();
 			Regex regex = new Regex(@"(\w+)");
 			MatchCollection matches;
-			List<string> additional = new List<string> { "exists", "all", "assign" };
+			string[] additional = new string[] { "exists", "all", "assign" };
 
 			foreach (string item in input)
 			{

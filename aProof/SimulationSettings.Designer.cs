@@ -76,14 +76,5 @@ namespace aProof {
                 return ((uint)(this["MAX_WORDS_COUNT_FOR_GOAL"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public uint MAX_WORDS_COUNT_FOR_RELATION {
-            get {
-                return ((uint)(this["MAX_WORDS_COUNT_FOR_RELATION"]));
-            }
-        }
     }
 }
