@@ -38,14 +38,12 @@ namespace aProof
 		public Agent() : this(new DictHandler(@"..\..\dictionary.csv"), new HashSet<string>(), new HashSet<string>()) { }
 
 		private string ReturnSign()
-		{   // TODO: Remove "Random rng = new Random();"
-			// Random rng = new Random();
+		{
 			return rng.Next(2) == 1 ? "-" : "";
 		}
 
 		private string ReturnQuantifierWithSpace()
 		{
-			// Random rng = new Random();
 			return rng.Next(2) == 1 ? "all " : "exists ";
 		}
 
@@ -63,7 +61,6 @@ namespace aProof
 
 		private string GenerateSimpleSubExpr()
 		{
-			// Random rng = new Random();
 			if (dictionary.Vars.Length == 0 && dictionary.Nouns.Length == 0)
 				return "";
 			if (dictionary.Vars.Length == 0 && dictionary.Nouns.Length > 0)
@@ -77,7 +74,6 @@ namespace aProof
 
 		private string GenerateRelationalSubExpr()
 		{
-			// Random rng = new Random();
 			StringBuilder output = new StringBuilder(256);
 			if (dictionary.Relations.Length > 0 && (dictionary.Vars.Length > 0 || dictionary.Nouns.Length > 0))
 			{
@@ -100,7 +96,6 @@ namespace aProof
 			string relationalSubExpr = GenerateRelationalSubExpr();
 			if (dictionary.Relations.Length > 0 && dictionary.Vars.Length > 0)
 			{
-				// Random rng = new Random();
 				List<string> varsPool = new List<string>();
 				HashSet<string> usedVars = new HashSet<string>();
 				Regex regex = new Regex(@"(\w+)");
@@ -135,7 +130,6 @@ namespace aProof
 
 		private string GenerateExpr(int wordsCount, ExpressionComplexity exprComplexity)
 		{
-			// Random rng = new Random();
 			StringBuilder output = new StringBuilder(512);
 			for (int i = 0; i < wordsCount; ++i)
 			{
@@ -158,7 +152,6 @@ namespace aProof
 
 		private void DrawInitialAssumptionsOrGoals(DictHandler dictionary, ExpressionType exprType)
 		{
-			// Random rng = new Random();
 			int maxExprCount, exprCount, maxWordsCount, wordsCount;
 
 			switch (exprType)
@@ -188,7 +181,6 @@ namespace aProof
 
 		private HashSet<string> DrawTemporaryAssumptionsOrGoals(ExpressionType exprType)
 		{
-			// Random rng = new Random();
 			List<string> outputSet;
 			switch (exprType)
 			{
@@ -267,6 +259,7 @@ namespace aProof
 				this.Assumptions = assumptions;
 				this.Goal = goal;
 				this.ProofInfo = proofInfo;
+
 			}
 		}
 	}
