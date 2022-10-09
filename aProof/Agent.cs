@@ -39,7 +39,7 @@ namespace aProof
 
 		private string ReturnSign()
 		{
-			return rng.Next(2) == 1 ? "-" : "";
+			return rng.Next(100) < 30 ? "-" : "";
 		}
 
 		private string ReturnQuantifierWithSpace()
