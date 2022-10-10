@@ -34,9 +34,6 @@ namespace aProof
 			VerifyGoals();
 		}
 
-		// TODO: Remove testing empty constructor
-		public Agent() : this(new DictHandler(@"..\..\dictionary.csv"), new HashSet<string>(), new HashSet<string>()) { }
-
 		private string ReturnSign()
 		{
 			return rng.Next(100) < 30 ? "-" : "";
