@@ -14,7 +14,7 @@ namespace aProof
 		private HashSet<string> assumptions, goals;
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
-		private HashSet<ProvenPacket> facts; // Facts = proven goals, initially empty because facts must be proven
+		public HashSet<ProvenPacket> Facts { get; } // Facts = proven goals, initially empty because facts must be proven
 
 		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals)
 		{
@@ -23,7 +23,7 @@ namespace aProof
 			this.goals = goals;
 			this.rng = new Random();
 			this.prover = new ProverHelper();
-			this.facts = new HashSet<ProvenPacket>();
+			this.Facts = new HashSet<ProvenPacket>();
 			VerifyGoals();
 		}
 
@@ -210,7 +210,7 @@ namespace aProof
 					for (int i = 0; i < 1000; ++i)
 						if (prover.SearchForProof(currAssumptions, goal))
 						{
-							this.facts.Add(new ProvenPacket(assumptions, goal, prover.GetPartialOutput()));
+							this.Facts.Add(new ProvenPacket(dictionary.HashId, assumptions, goal, prover.GetPartialOutput()));
 							break;
 						}
 						else currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
@@ -245,21 +245,23 @@ namespace aProof
 			public AgentException(string errMsg) : base(errMsg) { }
 		}
 
-		private struct ProvenPacket
+		public struct ProvenPacket
 		{
+			public string DictionaryHashId { get; }
 			public HashSet<string> Assumptions { get; }
 			public string Goal { get; }
 			public string ProofInfo { get; }
 
 			public ProvenPacket(
+				string dictionaryHashId,
 				HashSet<string> assumptions,
 				string goal,
 				string proofInfo)
 			{
+				this.DictionaryHashId = dictionaryHashId;
 				this.Assumptions = assumptions;
 				this.Goal = goal;
 				this.ProofInfo = proofInfo;
-
 			}
 		}
 	}

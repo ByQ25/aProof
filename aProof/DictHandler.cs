@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace aProof
 {
@@ -11,27 +12,18 @@ namespace aProof
 	{
 		private readonly string[][] dictionary;
 
+		public readonly string HashId;
 		public string[] Vars => dictionary[0];
 		public string[] Nouns => dictionary[1];
 		public string[] Relations => dictionary[2];
 		public string[] RelationsSizes => dictionary[3];
 		public Dictionary<string, uint> RelationsWithSizes { get; }
 
-		public DictHandler(string[] vars, string[] nouns, string[] relations, string[] relationsSizes)
-		{
-			this.dictionary = new string[4][] {
-				vars,
-				nouns,
-				relations,
-				relationsSizes
-			};
-			this.RelationsWithSizes = CreateRelationsDictionary(relations, relationsSizes);
-		}
-
 		public DictHandler(string dictionaryPath)
 		{
 			this.dictionary = LoadDictionariesFromCsv(dictionaryPath);
 			this.RelationsWithSizes = CreateRelationsDictionary(this.Relations, this.RelationsSizes);
+			this.HashId = CalculateSha512Hash(SerilizeToCsv());
 		}
 
 		private string[][] LoadDictionariesFromCsv(string path)
@@ -77,7 +69,7 @@ namespace aProof
 			return relationsWithSizes;
 		}
 
-		public string SerilizeToCsv()
+		private string SerilizeToCsv()
 		{
 			StringBuilder sb = new StringBuilder(4096);
 			foreach (string[] list in dictionary)
@@ -90,6 +82,18 @@ namespace aProof
 				sb.Append('\n');
 			}
 			return sb.ToString();
+		}
+
+		private string CalculateSha512Hash(string input)
+		{
+			StringBuilder output = new StringBuilder(128);
+			using (SHA512 sha512 = SHA512.Create())
+			{
+				byte[] shaBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(input));
+				for (int i = 0; i < shaBytes.Length; ++i)
+					output.Append(shaBytes[i].ToString("x2"));
+			}
+			return output.ToString();
 		}
 
 		// TODO: Is this method usueful?
