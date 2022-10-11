@@ -203,8 +203,7 @@ namespace aProof
 				foreach (string goal in goals)
 				{
 					currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
-					//for (int i = 0; i < SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS; ++i)
-					for (int i = 0; i < 1000; ++i)
+					for (int i = 0; i < SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS; ++i)
 						if (prover.SearchForProof(currAssumptions, goal))
 						{
 							this.Facts.Add(new ProvenPacket(dictionary.HashId, assumptions, goal, prover.GetPartialOutput()));
@@ -259,6 +258,19 @@ namespace aProof
 				this.Assumptions = assumptions;
 				this.Goal = goal;
 				this.ProofInfo = proofInfo;
+			}
+
+			public override string ToString()
+			{
+				StringBuilder output = new StringBuilder(16384);
+				output.AppendLine("Assumptions:");
+				foreach (string assumption in Assumptions)
+					output.AppendLine(assumption);
+				output.AppendFormat("\nGoal: {0}\n\n", Goal);
+				output.AppendLine("Output:");
+				output.AppendLine(ProofInfo);
+				output.Append("\n\n\n");
+				return output.ToString();
 			}
 		}
 	}
