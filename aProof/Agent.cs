@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,14 +11,18 @@ namespace aProof
 	{
 		private enum ExpressionType { Assumptions, Goals }
 		private enum ExpressionComplexity { Simple, Relational, GeneralQuantifiers }
+		private readonly bool isDebugModeOn;
+		private readonly string debugLogFilePath;
 		private Random rng;
 		private HashSet<string> assumptions, goals;
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
 		public HashSet<ProvenPacket> Facts { get; } // Facts = proven goals, initially empty because facts must be proven
 
-		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals)
+		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals, bool isDebugModeOn)
 		{
+			this.isDebugModeOn = isDebugModeOn;
+			this.debugLogFilePath = @"debug.log";
 			this.dictionary = dictionary;
 			this.assumptions = assumptions;
 			this.goals = goals;
@@ -27,12 +32,14 @@ namespace aProof
 			VerifyGoals();
 		}
 
-		public Agent(DictHandler dictionary) : this(dictionary, new HashSet<string>(), new HashSet<string>())
+		public Agent(DictHandler dictionary, bool isDebugModeOn) : this(dictionary, new HashSet<string>(), new HashSet<string>(), isDebugModeOn)
 		{
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Assumptions);
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Goals);
 			VerifyGoals();
 		}
+
+		public Agent(DictHandler dictionary) : this(dictionary, false) { }
 
 		private string ReturnSign()
 		{
@@ -197,6 +204,7 @@ namespace aProof
 
 		private void VerifyGoals()
 		{
+			bool isProofFound;
 			if (assumptions.Count > 0 && goals.Count > 0)
 			{
 				HashSet<string> currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
@@ -204,14 +212,46 @@ namespace aProof
 				{
 					currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
 					for (int i = 0; i < SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS; ++i)
-						if (prover.SearchForProof(currAssumptions, goal))
+					{
+						isProofFound = prover.SearchForProof(currAssumptions, goal);
+						if (isDebugModeOn)
+							LogCurrentStateAsDebug(
+								new ProvenPacket(
+									dictionary.HashId,
+									currAssumptions,
+									goal,
+									prover.GetPartialOutput()
+								)
+							);
+						if (isProofFound)
 						{
-							this.Facts.Add(new ProvenPacket(dictionary.HashId, assumptions, goal, prover.GetPartialOutput()));
+							this.Facts.Add(
+								new ProvenPacket(
+									dictionary.HashId,
+									currAssumptions,
+									goal,
+									prover.GetPartialOutput()
+								)
+							);
 							break;
 						}
-						else currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
+						else
+							currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
+					}
 				}
 			}
+		}
+
+		private void LogCurrentStateAsDebug(ProvenPacket pp)
+		{
+			try
+			{
+				if (!File.Exists(this.debugLogFilePath))
+					File.Create(this.debugLogFilePath);
+				using (StreamWriter sw = new StreamWriter(this.debugLogFilePath))
+					sw.Write(pp.ToString());
+			}
+			catch { return; }
 		}
 
 		// TODO: Remove testing method before release
