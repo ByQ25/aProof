@@ -39,7 +39,6 @@ namespace aProof
 		public bool SearchForProof(string input)
 		{
 			string output;
-
 			using (Process proverProc = new Process())
 			{
 				proverProc.StartInfo = new ProcessStartInfo
@@ -60,7 +59,7 @@ namespace aProof
 				output = proverProc.StandardOutput.ReadToEnd();
 				proverProc.WaitForExit();
 			}
-
+			outputProcessor.Reset();
 			return outputProcessor.ProcessProverOutput(output);
 		}
 
