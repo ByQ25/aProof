@@ -19,48 +19,87 @@ namespace aProof
 		public Environment(int suggestedAgentsNumber)
 		{
 			this.dictionary = new DictHandler(dictionaryPath);
-			this.knownFacts = (HashSet<Agent.ProvenPacket>)LoadProofsFoundByAgents(knownFactsFilePath).Where(pp => pp.DictionaryHashId == dictionary.HashId);
+			this.knownFacts = FilterProofsByDictionary(LoadProofsFromJson(knownFactsFilePath), this.dictionary.HashId);
 			int maxAgentsNumber = (int)SimulationSettings.Default.NUMBER_OF_AGENTS;
 			int agentsNumber = suggestedAgentsNumber;
-			int knownFactsPerAgent;
-			
 			if (suggestedAgentsNumber < 1 || suggestedAgentsNumber > maxAgentsNumber)
 			{
 				Random rng = new Random();
 				agentsNumber = rng.Next(maxAgentsNumber) + 1;
 			}
 			this.agents = new Agent[agentsNumber];
-			knownFactsPerAgent = knownFacts.Count / agents.Length;
-			for (int i = 0; i < agents.Length; ++i)
-			{
-				agents[i] = new Agent(dictionary);
-				for (int j = 0; j < knownFactsPerAgent; ++j)
-					agents[i].Facts.Add(knownFacts.ElementAt(j + knownFactsPerAgent * i));
-			}
+			for (int a = 0; a < agentsNumber;)
+				agents[a++] = new Agent(dictionary);
+			for (int i = 0; i < this.knownFacts.Count; ++i)
+				agents[i % agents.Length].Facts.Add(this.knownFacts.ElementAt(i));
 		}
 
 		public Environment(string dictionaryPath) : this(0) { }
 
-		private void SaveProofsFoundByAgents(string filePath, Agent[] agents, HashSet<Agent.ProvenPacket> facts)
+		private void GatherFactsFoundByAgents()
 		{
-			if (!File.Exists(filePath))
-				try { File.Create(filePath); }
-				catch { return; }
 			foreach (Agent agent in agents)
 				foreach (Agent.ProvenPacket fact in agent.Facts)
-					facts.Add(fact);
+					knownFacts.Add(fact);
+		}
+
+		private HashSet<Agent.ProvenPacket> FilterProofsByDictionary(HashSet<Agent.ProvenPacket> facts, string dictionaryHash)
+		{
+			HashSet<Agent.ProvenPacket> filteredProofs = new HashSet<Agent.ProvenPacket>();
+			if (facts.Count > 0)
+				foreach (Agent.ProvenPacket fact in facts)
+					if (fact.DictionaryHashId == dictionaryHash)
+						filteredProofs.Add(fact);
+			return filteredProofs;
+		}
+
+		private void SaveProofsToJson(string filePath, HashSet<Agent.ProvenPacket> facts)
+		{
+			if (!File.Exists(filePath))
+				try { File.Create(filePath).Close(); }
+				catch { return; }
 			using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
 				sw.Write(JsonConvert.SerializeObject(facts));
 		}
 
-		private HashSet<Agent.ProvenPacket> LoadProofsFoundByAgents(string filePath)
+		private HashSet<Agent.ProvenPacket> LoadProofsFromJson(string filePath)
 		{
 			HashSet<Agent.ProvenPacket> facts = new HashSet<Agent.ProvenPacket>();
-			if (File.Exists(filePath))
+			if (File.Exists(filePath) && new FileInfo(filePath).Length > 0)
 				using (StreamReader sr = new StreamReader(filePath, Encoding.UTF8))
 					try { facts = JsonConvert.DeserializeObject<HashSet<Agent.ProvenPacket>>(sr.ReadToEnd()); }
 					catch { facts.Clear(); }
 			return facts;
+		}
+
+		// TODO: Delete before release
+		public void TestSerializationToJson()
+		{
+			HashSet<string> assumptions = new HashSet<string>();
+			HashSet<string> goals = new HashSet<string>();
+			assumptions.Add("mother(Liz, Charley).");
+			assumptions.Add("father(Charley, Billy).");
+			assumptions.Add("-mother(x, y) | parent(x, y).");
+			assumptions.Add("-father(x, y) | parent(x, y).");
+			assumptions.Add("-parent(x, y) | ancestor(x, y).");
+			assumptions.Add("-parent(x, y) | -ancestor(y, z) | ancestor(x, z).");
+			goals.Add("ancestor(Liz, Billy).");
+			knownFacts.Clear();
+			knownFacts.Add(new Agent.ProvenPacket(dictionary.HashId, assumptions, goals.ElementAt(0), "Test string."));
+			SaveProofsToJson(knownFactsFilePath, knownFacts);
+		}
+
+		public void LetAgentsThinkInAdvance()
+		{
+			foreach (Agent agent in agents)
+				agent.VerifyGoals();
+			// SaveProofsFoundByAgents(this.knownFactsFilePath, this.agents);
+			// throw new NotImplementedException();
+		}
+
+		public void CarryConversation()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
