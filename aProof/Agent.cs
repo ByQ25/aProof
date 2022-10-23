@@ -19,9 +19,9 @@ namespace aProof
 		private readonly ProverHelper prover;
 		public HashSet<ProvenPacket> Facts { get; } // Facts = proven goals, initially empty because facts must be proven
 
-		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals, bool isDebugModeOn)
+		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals)
 		{
-			this.isDebugModeOn = isDebugModeOn;
+			this.isDebugModeOn = SimulationSettings.Default.IS_IN_DEBUG_MODE;
 			this.debugLogFilePath = @"debug.log";
 			this.dictionary = dictionary;
 			this.assumptions = assumptions;
@@ -29,17 +29,13 @@ namespace aProof
 			this.rng = new Random();
 			this.prover = new ProverHelper();
 			this.Facts = new HashSet<ProvenPacket>();
-			VerifyGoals();
 		}
 
-		public Agent(DictHandler dictionary, bool isDebugModeOn) : this(dictionary, new HashSet<string>(), new HashSet<string>(), isDebugModeOn)
+		public Agent(DictHandler dictionary) : this(dictionary, new HashSet<string>(), new HashSet<string>())
 		{
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Assumptions);
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Goals);
-			VerifyGoals();
 		}
-
-		public Agent(DictHandler dictionary) : this(dictionary, false) { }
 
 		private string ReturnSign()
 		{
@@ -71,9 +67,10 @@ namespace aProof
 				return dictionary.Nouns[rng.Next(dictionary.Nouns.Length)];
 			if (dictionary.Vars.Length > 0 && dictionary.Nouns.Length == 0)
 				return dictionary.Vars[rng.Next(dictionary.Vars.Length)];
-			return rng.Next(2) == 0 ?
-						dictionary.Vars[rng.Next(dictionary.Vars.Length)]
-						: dictionary.Nouns[rng.Next(dictionary.Nouns.Length)];
+			if (rng.Next(2) == 0)
+				return dictionary.Vars[rng.Next(dictionary.Vars.Length)];
+			else
+				return ReturnSign() + dictionary.Nouns[rng.Next(dictionary.Nouns.Length)];
 		}
 
 		private string GenerateRelationalSubExpr()
@@ -82,11 +79,11 @@ namespace aProof
 			if (dictionary.Relations.Length > 0 && (dictionary.Vars.Length > 0 || dictionary.Nouns.Length > 0))
 			{
 				KeyValuePair<string, uint> relation = dictionary.RelationsWithSizes.ElementAt(rng.Next(dictionary.RelationsWithSizes.Count));
+				output.Append(ReturnSign());
 				output.Append(relation.Key);
 				output.Append("(");
 				for (int i = 0; i < relation.Value; ++i)
 				{
-					output.Append(ReturnSign());
 					output.Append(GenerateSimpleSubExpr());
 					output.Append(i > relation.Value - 2 ? ")" : ", ");
 				}
@@ -137,7 +134,6 @@ namespace aProof
 			StringBuilder output = new StringBuilder(512);
 			for (int i = 0; i < wordsCount; ++i)
 			{
-				if (exprComplexity != ExpressionComplexity.GeneralQuantifiers) output.Append(ReturnSign());
 				output.Append(GeneratePartialExpr(exprComplexity));
 				if (i < wordsCount - 1) output.Append(ReturnOperator(rng.Next(4)));
 			}
@@ -202,7 +198,7 @@ namespace aProof
 			}
 		}
 
-		private void VerifyGoals()
+		public void VerifyGoals()
 		{
 			bool isProofFound;
 			if (assumptions.Count > 0 && goals.Count > 0)
@@ -248,32 +244,10 @@ namespace aProof
 			{
 				if (!File.Exists(this.debugLogFilePath))
 					File.Create(this.debugLogFilePath);
-				using (StreamWriter sw = new StreamWriter(this.debugLogFilePath))
+				using (StreamWriter sw = new StreamWriter(this.debugLogFilePath, true))
 					sw.Write(pp.ToString());
 			}
 			catch { return; }
-		}
-
-		// TODO: Remove testing method before release
-		public List<string> TestAgent()
-		{
-			List<string> result = new List<string>();
-
-			assumptions.Add("mother(Liz, Charley).");
-			assumptions.Add("father(Charley, Billy).");
-			assumptions.Add("-mother(x, y) | parent(x, y).");
-			assumptions.Add("-father(x, y) | parent(x, y).");
-			assumptions.Add("-parent(x, y) | ancestor(x, y).");
-			assumptions.Add("-parent(x, y) | -ancestor(y, z) | ancestor(x, z).");
-			goals.Add("ancestor(Liz, Billy).");
-			if (dictionary.ValidateInputAgainstDictionary(assumptions) && dictionary.ValidateInputAgainstDictionary(goals))
-			{
-				prover.SearchForProof(assumptions, goals);
-				result.Add(prover.GetPartialOutput());
-				result.Add(prover.GetFullOutput());
-				return result;
-			}
-			else throw new AgentException("Input jest niezgodny z zadanym słownikiem.");
 		}
 
 		public class AgentException : ApplicationException
@@ -307,9 +281,9 @@ namespace aProof
 				foreach (string assumption in Assumptions)
 					output.AppendLine(assumption);
 				output.AppendFormat("\nGoal: {0}\n\n", Goal);
-				output.AppendLine("Output:");
+				output.AppendLine("---- PROVER OUTPUT ----");
 				output.AppendLine(ProofInfo);
-				output.Append("\n\n\n");
+				output.Append("\n\n--------------------------------\n");
 				return output.ToString();
 			}
 		}
