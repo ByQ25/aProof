@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace aProof
@@ -13,7 +13,7 @@ namespace aProof
 		private readonly string knownFactsFilePath = @"..\..\known_facts.json";
 		private readonly DictHandler dictionary;
 		private readonly Agent[] agents;
-		private readonly HashSet<Agent.ProvenPacket> knownFacts;
+		private readonly HashSet<ProvenPacket> knownFacts;
 
 
 		public Environment(int suggestedAgentsNumber)
@@ -39,21 +39,21 @@ namespace aProof
 		private void GatherFactsFoundByAgents()
 		{
 			foreach (Agent agent in agents)
-				foreach (Agent.ProvenPacket fact in agent.Facts)
+				foreach (ProvenPacket fact in agent.Facts)
 					knownFacts.Add(fact);
 		}
 
-		private HashSet<Agent.ProvenPacket> FilterProofsByDictionary(HashSet<Agent.ProvenPacket> facts, string dictionaryHash)
+		private HashSet<ProvenPacket> FilterProofsByDictionary(HashSet<ProvenPacket> facts, string dictionaryHash)
 		{
-			HashSet<Agent.ProvenPacket> filteredProofs = new HashSet<Agent.ProvenPacket>();
+			HashSet<ProvenPacket> filteredProofs = new HashSet<ProvenPacket>();
 			if (facts.Count > 0)
-				foreach (Agent.ProvenPacket fact in facts)
+				foreach (ProvenPacket fact in facts)
 					if (fact.DictionaryHashId == dictionaryHash)
 						filteredProofs.Add(fact);
 			return filteredProofs;
 		}
 
-		private void SaveProofsToJson(string filePath, HashSet<Agent.ProvenPacket> facts)
+		private void SaveProofsToJson(string filePath, HashSet<ProvenPacket> facts)
 		{
 			if (!File.Exists(filePath))
 				try { File.Create(filePath).Close(); }
@@ -62,12 +62,12 @@ namespace aProof
 				sw.Write(JsonConvert.SerializeObject(facts));
 		}
 
-		private HashSet<Agent.ProvenPacket> LoadProofsFromJson(string filePath)
+		private HashSet<ProvenPacket> LoadProofsFromJson(string filePath)
 		{
-			HashSet<Agent.ProvenPacket> facts = new HashSet<Agent.ProvenPacket>();
+			HashSet<ProvenPacket> facts = new HashSet<ProvenPacket>();
 			if (File.Exists(filePath) && new FileInfo(filePath).Length > 0)
 				using (StreamReader sr = new StreamReader(filePath, Encoding.UTF8))
-					try { facts = JsonConvert.DeserializeObject<HashSet<Agent.ProvenPacket>>(sr.ReadToEnd()); }
+					try { facts = JsonConvert.DeserializeObject<HashSet<ProvenPacket>>(sr.ReadToEnd()); }
 					catch { facts.Clear(); }
 			return facts;
 		}
@@ -85,7 +85,7 @@ namespace aProof
 			assumptions.Add("-parent(x, y) | -ancestor(y, z) | ancestor(x, z).");
 			goals.Add("ancestor(Liz, Billy).");
 			knownFacts.Clear();
-			knownFacts.Add(new Agent.ProvenPacket(dictionary.HashId, assumptions, goals.ElementAt(0), "Test string."));
+			knownFacts.Add(new ProvenPacket(dictionary.HashId, assumptions, goals.ElementAt(0), "Test string."));
 			SaveProofsToJson(knownFactsFilePath, knownFacts);
 		}
 

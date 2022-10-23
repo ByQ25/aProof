@@ -51,6 +51,7 @@
     <Compile Include="IProverOutputProcessor.cs" />
     <Compile Include="AProofMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProvenPacket.cs" />
     <Compile Include="ProverHelper.cs" />
     <Compile Include="ProverOutputProcessor.cs" />
     <Compile Include="SimulationSettings.Designer.cs">
