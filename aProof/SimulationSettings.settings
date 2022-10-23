@@ -6,10 +6,10 @@
       <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="MAX_PROOF_SEARCH_ATTEMPTS" Type="System.UInt32" Scope="Application">
-      <Value Profile="(Default)">16</Value>
+      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="MAX_ASSUMPTIONS_DURING_INIT" Type="System.UInt32" Scope="Application">
-      <Value Profile="(Default)">128</Value>
+      <Value Profile="(Default)">16</Value>
     </Setting>
     <Setting Name="MAX_WORDS_COUNT_FOR_ASSUMPTION" Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">4</Value>
@@ -19,6 +19,9 @@
     </Setting>
     <Setting Name="MAX_WORDS_COUNT_FOR_GOAL" Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">4</Value>
+    </Setting>
+    <Setting Name="IS_IN_DEBUG_MODE" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

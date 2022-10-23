@@ -34,7 +34,7 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public uint MAX_PROOF_SEARCH_ATTEMPTS {
             get {
                 return ((uint)(this["MAX_PROOF_SEARCH_ATTEMPTS"]));
@@ -43,7 +43,7 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("128")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public uint MAX_ASSUMPTIONS_DURING_INIT {
             get {
                 return ((uint)(this["MAX_ASSUMPTIONS_DURING_INIT"]));
@@ -74,6 +74,15 @@ namespace aProof {
         public uint MAX_WORDS_COUNT_FOR_GOAL {
             get {
                 return ((uint)(this["MAX_WORDS_COUNT_FOR_GOAL"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IS_IN_DEBUG_MODE {
+            get {
+                return ((bool)(this["IS_IN_DEBUG_MODE"]));
             }
         }
     }
