@@ -178,6 +178,9 @@ namespace aProof
 					case 2: AddAssumptionOrGoal(GenerateExpr(1, ExpressionComplexity.GeneralQuantifiers), exprType); break;				// General quantifiers: exists, all
 				}
 			}
+			// Removing empty assumptions / goals created because of particular dictionary
+			this.assumptions.Remove(".");
+			this.goals.Remove(".");
 		}
 
 		private HashSet<string> DrawTemporaryAssumptionsOrGoals(ExpressionType exprType)
