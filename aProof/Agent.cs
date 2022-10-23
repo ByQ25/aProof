@@ -17,7 +17,8 @@ namespace aProof
 		private HashSet<string> assumptions, goals;
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
-		public HashSet<ProvenPacket> Facts { get; } // Facts = proven goals, initially empty because facts must be proven
+		private readonly HashSet<ProvenPacket> facts;	// Facts = proven goals, initially empty because facts must be proven
+		public HashSet<ProvenPacket> Facts { get { return new HashSet<ProvenPacket>(facts); } }
 
 		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals)
 		{
@@ -28,7 +29,7 @@ namespace aProof
 			this.goals = goals;
 			this.rng = new Random();
 			this.prover = new ProverHelper();
-			this.Facts = new HashSet<ProvenPacket>();
+			this.facts = new HashSet<ProvenPacket>();
 		}
 
 		public Agent(DictHandler dictionary) : this(dictionary, new HashSet<string>(), new HashSet<string>())
@@ -47,7 +48,7 @@ namespace aProof
 			return rng.Next(2) == 1 ? "all " : "exists ";
 		}
 
-		private string ReturnOperator(int option) 
+		private string ReturnOperator(int option)
 		{
 			switch (option)
 			{
@@ -236,6 +237,14 @@ namespace aProof
 					}
 				}
 			}
+		}
+
+		public void AddExternalKnownFact(ProvenPacket factToAdd)
+		{
+			foreach (string assumption in factToAdd.Assumptions)
+				this.assumptions.Add(assumption);
+			this.goals.Add(factToAdd.Goal);
+			this.facts.Add(factToAdd);
 		}
 
 		private void LogCurrentStateAsDebug(ProvenPacket pp)

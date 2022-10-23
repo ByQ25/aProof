@@ -31,7 +31,7 @@ namespace aProof
 			for (int a = 0; a < agentsNumber;)
 				agents[a++] = new Agent(dictionary);
 			for (int i = 0; i < this.knownFacts.Count; ++i)
-				agents[i % agents.Length].Facts.Add(this.knownFacts.ElementAt(i));
+				agents[i % agents.Length].AddExternalKnownFact(this.knownFacts.ElementAt(i));
 		}
 
 		public Environment(string dictionaryPath) : this(0) { }
