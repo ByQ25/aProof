@@ -283,6 +283,21 @@ namespace aProof
 				this.ProofInfo = proofInfo;
 			}
 
+			public string DumpBaicDataToString()
+			{
+				StringBuilder output = new StringBuilder(8192);
+				output.AppendLine(this.DictionaryHashId);
+				if (this.Assumptions != null && this.Assumptions.Count > 0)
+				{
+					List<string> listedAssum = this.Assumptions.ToList();
+					listedAssum.Sort();
+					foreach (string assumption in listedAssum)
+						output.AppendLine(assumption);
+				}
+				output.AppendLine(this.Goal);
+				return output.ToString();
+			}
+
 			public override string ToString()
 			{
 				StringBuilder output = new StringBuilder(16384);
@@ -294,6 +309,29 @@ namespace aProof
 				output.AppendLine(ProofInfo);
 				output.Append("\n\n--------------------------------\n");
 				return output.ToString();
+			}
+
+			public override bool Equals(object obj)
+			{
+				// ProofInfo is not considered important in the context of object differentiation
+				if (obj == null || !(obj is ProvenPacket))
+					return false;
+				ProvenPacket other = (ProvenPacket)obj;
+				bool assumEquality = true;
+				if (this.Assumptions != other.Assumptions
+					&& this.Assumptions.Count == other.Assumptions.Count)
+					foreach (string assumption in other.Assumptions)
+						if (!this.Assumptions.Contains(assumption))
+							assumEquality = false;
+				return
+					this.DictionaryHashId == other.DictionaryHashId
+					&& this.Goal == other.Goal
+					&& assumEquality;
+			}
+
+			public override int GetHashCode()
+			{
+				return this.DumpBaicDataToString().GetHashCode();
 			}
 		}
 	}
