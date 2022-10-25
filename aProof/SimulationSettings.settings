@@ -5,6 +5,9 @@
     <Setting Name="NUMBER_OF_AGENTS" Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">2</Value>
     </Setting>
+    <Setting Name="MAX_REPEATS_FOR_DRAW" Type="System.UInt32" Scope="Application">
+      <Value Profile="(Default)">8</Value>
+    </Setting>
     <Setting Name="MAX_PROOF_SEARCH_ATTEMPTS" Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">16</Value>
     </Setting>

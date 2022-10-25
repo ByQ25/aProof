@@ -201,19 +201,40 @@ namespace aProof
 					return new HashSet<string>();
 			}
 		}
+		private bool IsGoalWellMatchedWithAssumptionsCheck(string goal, HashSet<string> assumptions)
+		{
+			Regex regex = new Regex(@"(\w+)");
+			MatchCollection matches = regex.Matches(goal);
+			HashSet<string> relationsUsedInGoal = new HashSet<string>();
+			foreach (Match match in matches)
+				if (this.dictionary.Relations.Contains(match.Value))
+					relationsUsedInGoal.Add(match.Value);
+			if (relationsUsedInGoal.Count == 0)
+				return true;
+			foreach (string relation in relationsUsedInGoal)
+				foreach (string assumption in assumptions)
+					if (assumption.Contains(relation))
+						return true;
+			return false;
+		}
 
 		public void VerifyGoals()
 		{
+			uint drawsCounter, maxDraws, maxProofSearchAttempts;
 			bool isProofFound;
 			ProvenPacket tmpPacket;
 			HashSet<string> currAssumptions;
+			maxDraws = SimulationSettings.Default.MAX_REPEATS_FOR_DRAW;
+			maxProofSearchAttempts = SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS;
 			if (assumptions.Count > 0 && goals.Count > 0)
 			{
 				foreach (string goal in goals)
 				{
-					for (int i = 0; i < SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS; ++i)
+					for (int i = 0; i < maxProofSearchAttempts; ++i)
 					{
-						currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
+						drawsCounter = 0;
+						do currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
+						while (!IsGoalWellMatchedWithAssumptionsCheck(goal, currAssumptions) && ++drawsCounter < maxDraws);
 						isProofFound = prover.SearchForProof(currAssumptions, goal);
 						if (isDebugModeOn || isProofFound)
 						{

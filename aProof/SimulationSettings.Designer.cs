@@ -34,6 +34,15 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public uint MAX_REPEATS_FOR_DRAW {
+            get {
+                return ((uint)(this["MAX_REPEATS_FOR_DRAW"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public uint MAX_PROOF_SEARCH_ATTEMPTS {
             get {
