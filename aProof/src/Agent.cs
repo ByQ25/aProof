@@ -205,38 +205,29 @@ namespace aProof
 		public void VerifyGoals()
 		{
 			bool isProofFound;
+			ProvenPacket tmpPacket;
+			HashSet<string> currAssumptions;
 			if (assumptions.Count > 0 && goals.Count > 0)
 			{
-				HashSet<string> currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
 				foreach (string goal in goals)
 				{
-					currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
 					for (int i = 0; i < SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS; ++i)
 					{
+						currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
 						isProofFound = prover.SearchForProof(currAssumptions, goal);
-						if (isDebugModeOn)
-							LogCurrentStateAsDebug(
-								new ProvenPacket(
-									dictionary.HashId,
-									currAssumptions,
-									goal,
-									prover.GetPartialOutput()
-								)
-							);
-						if (isProofFound)
+						if (isDebugModeOn || isProofFound)
 						{
-							this.Facts.Add(
-								new ProvenPacket(
-									dictionary.HashId,
-									currAssumptions,
-									goal,
-									prover.GetPartialOutput()
-								)
-							);
-							break;
+							tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetPartialOutput());
+							if (isDebugModeOn)
+							{
+								LogCurrentStateAsDebug(tmpPacket);
+							}
+							if (isProofFound)
+							{
+								this.Facts.Add(tmpPacket);
+								break;
+							}
 						}
-						else
-							currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
 					}
 				}
 			}
