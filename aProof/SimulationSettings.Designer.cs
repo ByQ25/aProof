@@ -34,7 +34,7 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public uint MAX_PROOF_SEARCH_ATTEMPTS {
             get {
                 return ((uint)(this["MAX_PROOF_SEARCH_ATTEMPTS"]));
@@ -61,7 +61,7 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
         public uint MAX_GOALS_DURING_INIT {
             get {
                 return ((uint)(this["MAX_GOALS_DURING_INIT"]));
