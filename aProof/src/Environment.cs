@@ -9,8 +9,8 @@ namespace aProof
 {
 	class Environment
 	{
-		private readonly string dictionaryPath = @"..\..\dictionary.csv";
-		private readonly string knownFactsFilePath = @"..\..\known_facts.json";
+		private readonly string dictionaryPath;
+		private readonly string knownFactsFilePath;
 		private readonly DictHandler dictionary;
 		private readonly Agent[] agents;
 		private readonly HashSet<ProvenPacket> knownFacts;
@@ -18,6 +18,8 @@ namespace aProof
 
 		public Environment(int suggestedAgentsNumber)
 		{
+			this.dictionaryPath = SimulationSettings.Default.DICTIONARY_FILE_PATH;
+			this.knownFactsFilePath = SimulationSettings.Default.KNOWN_FACTS_FILE_PATH;
 			this.dictionary = new DictHandler(dictionaryPath);
 			this.knownFacts = FilterProofsByDictionary(LoadProofsFromJson(knownFactsFilePath), this.dictionary.HashId);
 			int maxAgentsNumber = (int)SimulationSettings.Default.NUMBER_OF_AGENTS;

@@ -23,7 +23,7 @@ namespace aProof
 		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals)
 		{
 			this.isDebugModeOn = SimulationSettings.Default.IS_IN_DEBUG_MODE;
-			this.debugLogFilePath = @"debug.log";
+			this.debugLogFilePath = SimulationSettings.Default.DEBUG_FILE_PATH;
 			this.dictionary = dictionary;
 			this.assumptions = assumptions;
 			this.goals = goals;

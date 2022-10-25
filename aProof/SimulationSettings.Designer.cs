@@ -85,5 +85,32 @@ namespace aProof {
                 return ((bool)(this["IS_IN_DEBUG_MODE"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("debug.log")]
+        public string DEBUG_FILE_PATH {
+            get {
+                return ((string)(this["DEBUG_FILE_PATH"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("..\\..\\dictionary.csv")]
+        public string DICTIONARY_FILE_PATH {
+            get {
+                return ((string)(this["DICTIONARY_FILE_PATH"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("..\\..\\known_facts.json")]
+        public string KNOWN_FACTS_FILE_PATH {
+            get {
+                return ((string)(this["KNOWN_FACTS_FILE_PATH"]));
+            }
+        }
     }
 }
