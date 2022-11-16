@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -22,21 +23,26 @@ namespace aProof
 			this.knownFactsFilePath = SimulationSettings.Default.KNOWN_FACTS_FILE_PATH;
 			this.dictionary = new DictHandler(dictionaryPath);
 			this.knownFacts = FilterProofsByDictionary(LoadProofsFromJson(knownFactsFilePath), this.dictionary.HashId);
-			int maxAgentsNumber = (int)SimulationSettings.Default.NUMBER_OF_AGENTS;
-			int agentsNumber = suggestedAgentsNumber;
-			if (suggestedAgentsNumber < 1 || suggestedAgentsNumber > maxAgentsNumber)
-			{
-				Random rng = new Random();
-				agentsNumber = rng.Next(maxAgentsNumber) + 1;
-			}
-			this.agents = new Agent[agentsNumber];
-			for (int a = 0; a < agentsNumber;)
-				agents[a++] = new Agent(dictionary);
+			this.agents = InitializeAgents(suggestedAgentsNumber);
 			for (int i = 0; i < this.knownFacts.Count; ++i)
 				agents[i % agents.Length].AddExternalKnownFact(this.knownFacts.ElementAt(i));
 		}
 
 		public Environment(string dictionaryPath) : this(0) { }
+
+		private Agent[] InitializeAgents(int suggestedAgentsNumber)
+		{
+			Agent[] agents;
+			Random rng = new Random();
+			int maxAgentsNumber = (int)SimulationSettings.Default.NUMBER_OF_AGENTS;
+			int agentsNumber = suggestedAgentsNumber;
+			if (suggestedAgentsNumber < 1 || suggestedAgentsNumber > maxAgentsNumber)
+				agentsNumber = rng.Next(maxAgentsNumber) + 1;
+			agents = new Agent[agentsNumber];
+			for (int a = 0; a < agentsNumber;)
+				agents[a++] = new Agent(dictionary, rng.Next());
+			return agents;
+		}
 
 		private void GatherFactsFoundByAgents()
 		{
@@ -91,12 +97,23 @@ namespace aProof
 			SaveProofsToJson(knownFactsFilePath, knownFacts);
 		}
 
-		public void LetAgentsThinkInAdvance()
+		public void LetAgentsThinkInAdvance(int iterations)
 		{
-			foreach (Agent agent in agents)
-				agent.VerifyGoals();
-			// SaveProofsFoundByAgents(this.knownFactsFilePath, this.agents);
-			// throw new NotImplementedException();
+			Thread[] threads = new Thread[this.agents.Length];
+			for (int i = 0; i < iterations; ++i)
+			{
+				for (int j = 0; j < threads.Length; ++j)
+				{
+					threads[j] = new Thread(new ThreadStart(agents[j].VerifyGoals));
+					threads[j].Start();
+				}
+				for (int k = 0; k < threads.Length; ++k)
+					threads[k].Join();
+				GatherFactsFoundByAgents();
+				for (int a = 0; a < agents.Length; ++a)
+					agents[a].RefreshAssumptionsAndGoals();
+			}
+			SaveProofsToJson(this.knownFactsFilePath, this.knownFacts);
 		}
 
 		public void CarryConversation()

@@ -17,7 +17,7 @@ namespace aProof
 				key = Console.ReadKey(true).KeyChar;
 				switch (key)
 				{
-					case '1': env.LetAgentsThinkInAdvance(); break;
+					case '1': env.LetAgentsThinkInAdvance(10); break;
 					case '2': env.CarryConversation(); break;
 				}
 			} while (key != '3');
