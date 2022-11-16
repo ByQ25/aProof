@@ -20,19 +20,19 @@ namespace aProof
 		private readonly HashSet<ProvenPacket> facts;	// Facts = proven goals, initially empty because facts must be proven
 		public HashSet<ProvenPacket> Facts { get { return new HashSet<ProvenPacket>(facts); } }
 
-		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals)
+		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals, int rngSeed)
 		{
 			this.isDebugModeOn = SimulationSettings.Default.IS_IN_DEBUG_MODE;
 			this.debugLogFilePath = SimulationSettings.Default.DEBUG_FILE_PATH;
 			this.dictionary = dictionary;
 			this.assumptions = assumptions;
 			this.goals = goals;
-			this.rng = new Random();
+			this.rng = new Random(rngSeed);
 			this.prover = new ProverHelper();
 			this.facts = new HashSet<ProvenPacket>();
 		}
 
-		public Agent(DictHandler dictionary) : this(dictionary, new HashSet<string>(), new HashSet<string>())
+		public Agent(DictHandler dictionary, int rngSeed) : this(dictionary, new HashSet<string>(), new HashSet<string>(), rngSeed)
 		{
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Assumptions);
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Goals);
@@ -183,24 +183,50 @@ namespace aProof
 			this.goals.Remove(".");
 		}
 
+		public void RefreshAssumptionsAndGoals()
+		{
+			HashSet<string> randomAssumptionsToReuse = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
+			HashSet<string> randomGoalsToReuse = DrawTemporaryAssumptionsOrGoals(ExpressionType.Goals);
+			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Assumptions);
+			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Goals);
+			this.assumptions.Concat(randomAssumptionsToReuse);
+			this.goals.Concat(randomGoalsToReuse);
+			foreach (ProvenPacket fact in this.facts)
+			{
+				this.assumptions.Concat(fact.Assumptions);
+				this.goals.Add(fact.Goal);
+			}
+			// TODO: Assumptions and goals went over 2000 once...
+		}
+
 		private HashSet<string> DrawTemporaryAssumptionsOrGoals(ExpressionType exprType)
 		{
-			List<string> outputSet;
+			int exprToExcludeCount = 0;
+			List<string> outputSet = new List<string>();
 			switch (exprType)
 			{
 				case ExpressionType.Assumptions:
-					outputSet = new List<string>(assumptions);
-					int exprToExcludeCount = rng.Next(assumptions.Count);
-					for (int i = 0; i < exprToExcludeCount; ++i)
-						outputSet.RemoveAt(rng.Next(outputSet.Count));
-					return new HashSet<string>(outputSet);
+					if (assumptions.Count > 0)
+					{
+						outputSet = new List<string>(assumptions);
+						exprToExcludeCount = rng.Next(assumptions.Count);
+					}
+					break;
 				case ExpressionType.Goals:
-					outputSet = new List<string>(goals);
-					return new HashSet<string>() { outputSet[rng.Next(outputSet.Count)] };
+					if (goals.Count > 0)
+					{
+						outputSet = new List<string>(goals);
+						exprToExcludeCount = rng.Next(goals.Count);
+					}
+					break;
 				default:
-					return new HashSet<string>();
+					break;
 			}
+			for (int i = 0; i < exprToExcludeCount; ++i)
+				outputSet.RemoveAt(rng.Next(outputSet.Count));
+			return new HashSet<string>(outputSet);
 		}
+
 		private bool IsGoalWellMatchedWithAssumptionsCheck(string goal, HashSet<string> assumptions)
 		{
 			Regex regex = new Regex(@"(\w+)");
@@ -228,25 +254,28 @@ namespace aProof
 			maxProofSearchAttempts = SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS;
 			if (assumptions.Count > 0 && goals.Count > 0)
 			{
-				foreach (string goal in goals)
+				lock (goals) // TODO: Why this lock is necessary?
 				{
-					for (int i = 0; i < maxProofSearchAttempts; ++i)
+					foreach (string goal in goals)
 					{
-						drawsCounter = 0;
-						do currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
-						while (!IsGoalWellMatchedWithAssumptionsCheck(goal, currAssumptions) && ++drawsCounter < maxDraws);
-						isProofFound = prover.SearchForProof(currAssumptions, goal);
-						if (isDebugModeOn || isProofFound)
+						for (int i = 0; i < maxProofSearchAttempts; ++i)
 						{
-							tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetPartialOutput());
-							if (isDebugModeOn)
+							drawsCounter = 0;
+							do currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
+							while (!IsGoalWellMatchedWithAssumptionsCheck(goal, currAssumptions) && ++drawsCounter < maxDraws);
+							isProofFound = prover.SearchForProof(currAssumptions, goal);
+							if (isDebugModeOn || isProofFound)
 							{
-								LogCurrentStateAsDebug(tmpPacket);
-							}
-							if (isProofFound)
-							{
-								this.Facts.Add(tmpPacket);
-								break;
+								tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetPartialOutput());
+								if (isDebugModeOn)
+								{
+									LogCurrentStateAsDebug(tmpPacket);
+								}
+								if (isProofFound)
+								{
+									this.Facts.Add(tmpPacket);
+									break;
+								}
 							}
 						}
 					}
