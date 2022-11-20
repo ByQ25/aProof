@@ -15,7 +15,8 @@ namespace aProof
 			string dictionaryHashId,
 			HashSet<string> assumptions,
 			string goal,
-			string proofInfo)
+			string proofInfo
+		)
 		{
 			this.DictionaryHashId = dictionaryHashId;
 			this.Assumptions = assumptions;
@@ -23,7 +24,7 @@ namespace aProof
 			this.ProofInfo = proofInfo;
 		}
 
-		public string DumpBaicDataToString()
+		private string DumpBaicDataToString()
 		{
 			StringBuilder output = new StringBuilder(8192);
 			output.AppendLine(this.DictionaryHashId);
