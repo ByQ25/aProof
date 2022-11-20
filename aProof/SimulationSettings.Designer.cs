@@ -88,6 +88,15 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public uint DEFAULT_THINKING_ITERATIONS {
+            get {
+                return ((uint)(this["DEFAULT_THINKING_ITERATIONS"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool IS_IN_DEBUG_MODE {
             get {
