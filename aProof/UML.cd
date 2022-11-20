@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="aProof.SimulationSettings">
+    <Position X="14" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAIAAAAAAAAIAAAIBAAAAABApIAAADAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.Agent">
+    <Position X="9.25" Y="0.5" Width="2.5" />
+    <NestedTypes>
+      <Enum Name="aProof.Agent.ExpressionType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\Agent.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="aProof.Agent.ExpressionComplexity" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\Agent.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="aProof.Agent.AgentException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\Agent.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IAxEBAiBQAAAAABBBAQEAABMABBAAAEAECAkEQAAQQA=</HashCode>
+      <FileName>src\Agent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.AProofMain">
+    <Position X="16.75" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="aProof.AProofMain.AProofException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\AProofMain.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>src\AProofMain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.DictHandler">
+    <Position X="16" Y="5" Width="2.25" />
+    <NestedTypes>
+      <Class Name="aProof.DictHandler.DictHandlerException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\DictHandler.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QAAIQAAABAAAAAAEICAQAAAEAggACAAAAAAAEAAAAAA=</HashCode>
+      <FileName>src\DictHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.Environment">
+    <Position X="11.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAACAAAA0AAAQAIAQAAAAAEgAAAAAAAAADAAgAiAAA=</HashCode>
+      <FileName>src\Environment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.ProverHelper">
+    <Position X="10.75" Y="8.5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="aProof.ProverHelper.ProverHelperException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\ProverHelper.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEACAEAAAAAAAAACQAACAAAAAQAAAAAAA=</HashCode>
+      <FileName>src\ProverHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.ProverOutputProcessor" BaseTypeListCollapsed="true">
+    <Position X="14" Y="5" Width="2" />
+    <NestedTypes>
+      <Enum Name="aProof.ProverOutputProcessor.ProofSection" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\ProverOutputProcessor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAEAABBAEQIAAAAAAEgAACAAACgAIAAAgAAA=</HashCode>
+      <FileName>src\ProverOutputProcessor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.393" Collapsed="true" />
+  </Class>
+  <Class Name="aProof.Translator" BaseTypeListCollapsed="true">
+    <Position X="12.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAIAAAA=</HashCode>
+      <FileName>src\Translator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.283" Collapsed="true" />
+  </Class>
+  <Struct Name="aProof.ProvenPacket">
+    <Position X="9.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQCBAgAAAAAAAAAEgEAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\ProvenPacket.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="aProof.IProverOutputProcessor">
+    <Position X="12" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAEAABBAEAIAAAAAAEgAACAAACgAAAAAgAAA=</HashCode>
+      <FileName>src\IProverOutputProcessor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="aProof.ITranslator">
+    <Position X="12.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>src\ITranslator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
