@@ -10,7 +10,7 @@ namespace aProof
 		private string proverPath;
 		private static readonly string
 			defaultProverPath = @"..\..\Prover9-Mace4\bin-win32\prover9.exe";
-		private ProverOutputProcessor outputProcessor;
+		private IProverOutputProcessor outputProcessor;
 
 
 		public ProverHelper(string proverPath)
