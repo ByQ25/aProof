@@ -96,7 +96,6 @@ namespace aProof
 			return output.ToString();
 		}
 
-		// TODO: Is this method usueful?
 		public bool ValidateInputAgainstDictionary(string input)
 		{
 			Regex regex = new Regex(@"(\w+)");
