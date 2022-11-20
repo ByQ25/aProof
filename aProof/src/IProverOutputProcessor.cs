@@ -18,5 +18,6 @@ namespace aProof
 
 		// Methods
 		bool ProcessProverOutput(string proof);
+		void Reset();
 	}
 }
