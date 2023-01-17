@@ -17,8 +17,10 @@ namespace aProof
 		private HashSet<string> assumptions, goals;
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
-		private readonly HashSet<ProvenPacket> facts;	// Facts = proven goals, initially empty because facts must be proven
+		private readonly ITranslator translator;
+		private readonly HashSet<ProvenPacket> usedFacts, facts;	// Facts = proven goals, initially empty because facts must be proven
 		public HashSet<ProvenPacket> Facts { get { return new HashSet<ProvenPacket>(facts); } }
+		public int GetNumberOfKnownNewFacts { get { return GetFreshFacts().Count; } } 
 
 		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals, int rngSeed)
 		{
@@ -29,6 +31,7 @@ namespace aProof
 			this.goals = goals;
 			this.rng = new Random(rngSeed);
 			this.prover = new ProverHelper();
+			this.usedFacts = new HashSet<ProvenPacket>();
 			this.facts = new HashSet<ProvenPacket>();
 		}
 
@@ -40,7 +43,7 @@ namespace aProof
 
 		private string ReturnSign()
 		{
-			return rng.Next(100) < 30 ? "-" : "";
+			return rng.Next(100) < 10 ? "-" : "";
 		}
 
 		private string ReturnQuantifierWithSpace()
@@ -285,10 +288,27 @@ namespace aProof
 
 		public void AddExternalKnownFact(ProvenPacket factToAdd)
 		{
+			// TODO: Verify in the context of function "CarryConversation"
 			foreach (string assumption in factToAdd.Assumptions)
 				this.assumptions.Add(assumption);
 			this.goals.Add(factToAdd.Goal);
 			this.facts.Add(factToAdd);
+		}
+
+		private HashSet<ProvenPacket> GetFreshFacts()
+		{
+			return new HashSet<ProvenPacket>(this.facts.Except(usedFacts));
+		}
+
+		public Tuple<ProvenPacket, string> ChooseFactAndSpeak()
+		{
+			HashSet<ProvenPacket> stillFreshFacts = GetFreshFacts();
+			int numberOfFreshFacts = stillFreshFacts.Count;
+			ProvenPacket chosenFact = stillFreshFacts.ElementAt(rng.Next(numberOfFreshFacts));
+			string userLanguage = System.Globalization.CultureInfo.InstalledUICulture.Name;
+			string message = translator.Translate(chosenFact.ProofInfo, userLanguage);
+			this.usedFacts.Add(chosenFact);
+			return new Tuple<ProvenPacket, string>(chosenFact, message);
 		}
 
 		private void LogCurrentStateAsDebug(ProvenPacket pp)

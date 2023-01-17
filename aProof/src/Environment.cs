@@ -16,7 +16,6 @@ namespace aProof
 		private readonly Agent[] agents;
 		private readonly HashSet<ProvenPacket> knownFacts;
 
-
 		public Environment(int suggestedAgentsNumber)
 		{
 			this.dictionaryPath = SimulationSettings.Default.DICTIONARY_FILE_PATH;
@@ -93,14 +92,39 @@ namespace aProof
 			assumptions.Add("-parent(x, y) | -ancestor(y, z) | ancestor(x, z).");
 			goals.Add("ancestor(Liz, Billy).");
 			knownFacts.Clear();
-			knownFacts.Add(new ProvenPacket(dictionary.HashId, assumptions, goals.ElementAt(0), "Test string."));
+			knownFacts.Add(new ProvenPacket(dictionary.HashId, assumptions, goals.First(), "Test string."));
 			SaveProofsToJson(knownFactsFilePath, knownFacts);
 		}
 
-		public void LetAgentsThinkInAdvance(int iterations)
+		private Agent[] GetAgentsWithFreshFacts()
+		{
+			List<Agent> output = new List<Agent>();
+			for (int i = 0; i < agents.Length; ++i)
+				if (agents[i].GetNumberOfKnownNewFacts > 0)
+					output.Add(agents[i]);
+			return output.ToArray();
+		}
+
+		private void DistributeNewFact(ProvenPacket fact, int sourceAgentId)
+		{
+			for (int a = 0; a < agents.Length; ++a)
+			{
+				if (a == sourceAgentId)
+					continue;
+				else
+					agents[a].AddExternalKnownFact(fact);
+			}
+		}
+
+		private void WriteMessage(string input)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void LetAgentsThinkInAdvance(uint iterations)
 		{
 			Thread[] threads = new Thread[this.agents.Length];
-			for (int i = 0; i < iterations; ++i)
+			for (uint i = 0; i < iterations; ++i)
 			{
 				for (int j = 0; j < threads.Length; ++j)
 				{
@@ -112,12 +136,29 @@ namespace aProof
 				GatherFactsFoundByAgents();
 				for (int a = 0; a < agents.Length; ++a)
 					agents[a].RefreshAssumptionsAndGoals();
+				Console.WriteLine(i); // TODO: Remove this line befeore release
 			}
 			SaveProofsToJson(this.knownFactsFilePath, this.knownFacts);
 		}
 
-		public void CarryConversation()
+		public void CarryConversation(uint iterations)
 		{
+			Agent[] agentsWithFreshFacts = GetAgentsWithFreshFacts();
+			Tuple<ProvenPacket, string> factWithMessage;
+			for (int i = 0; i < iterations; ++i)
+			{
+				while (agentsWithFreshFacts.Length < 1)
+				{
+					LetAgentsThinkInAdvance(SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS);
+					agentsWithFreshFacts = GetAgentsWithFreshFacts();
+				}
+				for (int a = 0; a < agentsWithFreshFacts.Length; ++a)
+				{
+					factWithMessage = agentsWithFreshFacts[a].ChooseFactAndSpeak();
+					DistributeNewFact(factWithMessage.Item1, 1);
+					WriteMessage(factWithMessage.Item2);
+				}
+			}
 			throw new NotImplementedException();
 		}
 	}

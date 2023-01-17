@@ -18,7 +18,7 @@ namespace aProof
 				switch (key)
 				{
 					case '1': env.LetAgentsThinkInAdvance(10); break;
-					case '2': env.CarryConversation(); break;
+					case '2': env.CarryConversation(10); break;
 				}
 			} while (key != '3');
 
