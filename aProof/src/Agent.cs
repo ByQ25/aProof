@@ -281,7 +281,6 @@ namespace aProof
 					AddAssumptionOrGoal(assumption, DetrmineExpressionComplexity(assumption), ExpressionType.Assumptions);
 				AddAssumptionOrGoal(fact.Goal, DetrmineExpressionComplexity(fact.Goal), ExpressionType.Goals);
 			}
-			// TODO: Assumptions and goals went over 2000 once...
 		}
 
 		private HashSet<string> DrawTemporaryExpressions(HashSet<string> exprSet)
@@ -333,32 +332,29 @@ namespace aProof
 			HashSet<string> currAssumptions;
 			if (assumptions.Count > 0 && goals.Count > 0)
 			{
-				//lock (goals) // TODO: Why this lock is necessary?
-				//{
-					foreach (string goal in goals)
+				foreach (string goal in goals)
+				{
+					for (int i = 0; i < maxAttempts; ++i)
 					{
-						for (int i = 0; i < maxAttempts; ++i)
+						drawsCounter = 0;
+						do currAssumptions = DrawTemporaryExpressions(assumptions);
+						while (!IsGoalWellMatchedWithAssumptionsCheck(goal, currAssumptions) && ++drawsCounter < maxDraws);
+						isProofFound = prover.SearchForProof(currAssumptions, goal);
+						if (isDebugModeOn || isProofFound)
 						{
-							drawsCounter = 0;
-							do currAssumptions = DrawTemporaryExpressions(assumptions);
-							while (!IsGoalWellMatchedWithAssumptionsCheck(goal, currAssumptions) && ++drawsCounter < maxDraws);
-							isProofFound = prover.SearchForProof(currAssumptions, goal); // TODO: może to powoduje konieczność locka?
-							if (isDebugModeOn || isProofFound)
+							tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetPartialOutput());
+							if (isDebugModeOn)
 							{
-								tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetPartialOutput());
-								if (isDebugModeOn)
-								{
-									LogCurrentStateAsDebug(tmpPacket);
-								}
-								if (isProofFound)
-								{
-									this.facts.Add(tmpPacket);
-									break;
-								}
+								LogCurrentStateAsDebug(tmpPacket);
+							}
+							if (isProofFound)
+							{
+								this.facts.Add(tmpPacket);
+								break;
 							}
 						}
 					}
-				//}
+				}
 			}
 		}
 

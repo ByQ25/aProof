@@ -79,23 +79,6 @@ namespace aProof
 			return facts;
 		}
 
-		// TODO: Delete before release
-		public void TestSerializationToJson()
-		{
-			HashSet<string> assumptions = new HashSet<string>();
-			HashSet<string> goals = new HashSet<string>();
-			assumptions.Add("mother(Liz, Charley).");
-			assumptions.Add("father(Charley, Billy).");
-			assumptions.Add("-mother(x, y) | parent(x, y).");
-			assumptions.Add("-father(x, y) | parent(x, y).");
-			assumptions.Add("-parent(x, y) | ancestor(x, y).");
-			assumptions.Add("-parent(x, y) | -ancestor(y, z) | ancestor(x, z).");
-			goals.Add("ancestor(Liz, Billy).");
-			knownFacts.Clear();
-			knownFacts.Add(new ProvenPacket(dictionary.HashId, assumptions, goals.First(), "Test string."));
-			SaveProofsToJson(knownFactsFilePath, knownFacts);
-		}
-
 		private Agent[] GetAgentsWithFreshFacts()
 		{
 			List<Agent> output = new List<Agent>();
@@ -136,7 +119,7 @@ namespace aProof
 				GatherFactsFoundByAgents();
 				for (int a = 0; a < agents.Length; ++a)
 					agents[a].RefreshAssumptionsAndGoals();
-				Console.WriteLine(i); // TODO: Remove this line befeore release
+				Console.WriteLine(i); // TODO: Add proper progress indicator
 			}
 			SaveProofsToJson(this.knownFactsFilePath, this.knownFacts);
 		}
