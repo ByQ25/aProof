@@ -52,6 +52,15 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public uint MAX_PROOF_SEARCH_TIME {
+            get {
+                return ((uint)(this["MAX_PROOF_SEARCH_TIME"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public uint MAX_ASSUMPTIONS_DURING_INIT {
             get {

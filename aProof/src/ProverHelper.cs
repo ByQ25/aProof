@@ -39,12 +39,13 @@ namespace aProof
 		public bool SearchForProof(string input)
 		{
 			string output;
+			int maxSearchTime = (int)SimulationSettings.Default.MAX_PROOF_SEARCH_TIME;
 			using (Process proverProc = new Process())
 			{
 				proverProc.StartInfo = new ProcessStartInfo
 				{
 					FileName = proverPath,
-					Arguments = "-t 10",                        // Max proof search time
+					Arguments = string.Concat("-t ", maxSearchTime),
 					CreateNoWindow = true,
 					RedirectStandardInput = true,
 					RedirectStandardOutput = true,
@@ -57,7 +58,9 @@ namespace aProof
 				proverProc.StandardInput.Write(input);
 				proverProc.StandardInput.Close();
 				output = proverProc.StandardOutput.ReadToEnd();
-				proverProc.WaitForExit();
+				proverProc.WaitForExit(2000 * maxSearchTime);
+				if (!proverProc.HasExited)
+					proverProc.Kill();
 			}
 			outputProcessor.Reset();
 			return outputProcessor.ProcessProverOutput(output);
