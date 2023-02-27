@@ -13,8 +13,8 @@ namespace aProof
 		private enum ExpressionComplexity { Simple, Relational, GeneralQuantifiers }
 		private readonly bool isDebugModeOn;
 		private readonly string debugLogFilePath;
-		private Random rng;
-		private HashSet<string> assumptions, goals;
+		private readonly Random rng;
+		private readonly HashSet<string> assumptionsSimple, assumptionsRelational, goalsSimple, goalsRelational;
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
 		private readonly ITranslator translator;
@@ -27,8 +27,12 @@ namespace aProof
 			this.isDebugModeOn = SimulationSettings.Default.IS_IN_DEBUG_MODE;
 			this.debugLogFilePath = SimulationSettings.Default.DEBUG_FILE_PATH;
 			this.dictionary = dictionary;
-			this.assumptions = assumptions;
-			this.goals = goals;
+			this.assumptionsSimple = new HashSet<string>();
+			this.assumptionsRelational = new HashSet<string>();
+			this.goalsRelational = new HashSet<string>();
+			this.goalsSimple = new HashSet<string>();
+			SplitAssumptionsOrGoals(assumptions, ExpressionType.Assumptions);
+			SplitAssumptionsOrGoals(goals, ExpressionType.Goals);
 			this.rng = new Random(rngSeed);
 			this.prover = new ProverHelper();
 			this.usedFacts = new HashSet<ProvenPacket>();
@@ -135,23 +139,80 @@ namespace aProof
 
 		private string GenerateExpr(int wordsCount, ExpressionComplexity exprComplexity)
 		{
+			string currOperator = "";
+			bool
+				prevOperatorNeedsBrackets = false,
+				currOperatorNeedsBrackets = false;
 			StringBuilder output = new StringBuilder(512);
 			for (int i = 0; i < wordsCount; ++i)
 			{
+				currOperator = ReturnOperator(rng.Next(4));
+				currOperatorNeedsBrackets = currOperator.Contains("->");
+				if (
+					i < wordsCount - 1
+					&& currOperatorNeedsBrackets
+					&& !prevOperatorNeedsBrackets
+				) output.Append("(");
 				output.Append(GeneratePartialExpr(exprComplexity));
-				if (i < wordsCount - 1) output.Append(ReturnOperator(rng.Next(4)));
+				if (prevOperatorNeedsBrackets)
+					output.Append(")");
+				if (i < wordsCount - 1)
+				{
+					output.Append(currOperator);
+					if (currOperatorNeedsBrackets
+						&& (
+							prevOperatorNeedsBrackets
+							|| output[output.Length - currOperator.Length - 1] == ')'
+							&& output[output.Length - currOperator.Length - 2] == ')'
+						)
+					) output.Insert(0, '(');
+				}
+				prevOperatorNeedsBrackets = currOperatorNeedsBrackets;
 			}
 			output.Append(".");
 			return output.ToString();
 		}
 
-		private void AddAssumptionOrGoal(string expr, ExpressionType exprType)
+		private ExpressionComplexity DetrmineExpressionComplexity(string expr)
 		{
+			if (expr.Contains("all") || expr.Contains("exists"))
+				return ExpressionComplexity.GeneralQuantifiers;
+			foreach (string relation in this.dictionary.Relations)
+				if (expr.Contains(string.Concat(relation, "(")))
+					return ExpressionComplexity.Relational;
+			return ExpressionComplexity.Simple;
+		}
+
+		private void SplitAssumptionsOrGoals(HashSet<string> exprs, ExpressionType exprType)
+		{
+			foreach (string expr in exprs)
+				AddAssumptionOrGoal(expr, DetrmineExpressionComplexity(expr), exprType);
+		}
+
+		private void AddAssumptionOrGoal(string expr, ExpressionComplexity exprComplexity, ExpressionType exprType)
+		{
+			HashSet<string> setRefrenceTmp;
+			if (string.IsNullOrEmpty(expr) || expr == ".")
+				return;
 			switch (exprType)
 			{
-				case ExpressionType.Assumptions: this.assumptions.Add(expr); break;
-				case ExpressionType.Goals: this.goals.Add(expr); break;
+				case ExpressionType.Assumptions:
+					if (exprComplexity == ExpressionComplexity.Simple)
+						setRefrenceTmp = this.assumptionsSimple;
+					else
+						setRefrenceTmp = this.assumptionsRelational;
+					break;
+				case ExpressionType.Goals:
+					if (exprComplexity == ExpressionComplexity.Simple)
+						setRefrenceTmp = this.goalsSimple;
+					else
+						setRefrenceTmp = this.goalsRelational;
+					break;
+				default:
+					setRefrenceTmp = new HashSet<string>();
+					break;
 			}
+			setRefrenceTmp.Add(expr);
 		}
 
 		private void DrawInitialAssumptionsOrGoals(DictHandler dictionary, ExpressionType exprType)
@@ -176,54 +237,61 @@ namespace aProof
 				wordsCount = rng.Next(maxWordsCount + 1);
 				switch (rng.Next(3))
 				{
-					case 0: AddAssumptionOrGoal(GenerateExpr(wordsCount, ExpressionComplexity.Simple), exprType); break;				// Simple expression
-					case 1: AddAssumptionOrGoal(GenerateExpr(wordsCount, ExpressionComplexity.Relational), exprType); break;			// Relational expression
-					case 2: AddAssumptionOrGoal(GenerateExpr(1, ExpressionComplexity.GeneralQuantifiers), exprType); break;				// General quantifiers: exists, all
+					case 0:	// Simple expression
+						AddAssumptionOrGoal(
+							GenerateExpr(wordsCount, ExpressionComplexity.Simple),
+							ExpressionComplexity.Simple,
+							exprType
+						);
+						break;				
+					case 1: // Relational expression
+						AddAssumptionOrGoal(
+							GenerateExpr(wordsCount, ExpressionComplexity.Relational),
+							ExpressionComplexity.Relational,
+							exprType
+						);
+						break;
+					case 2:	// General quantifiers: exists, all
+						AddAssumptionOrGoal(
+							GenerateExpr(1, ExpressionComplexity.GeneralQuantifiers),
+							ExpressionComplexity.GeneralQuantifiers,
+							exprType
+						);
+						break;
 				}
 			}
-			// Removing empty assumptions / goals created because of particular dictionary
-			this.assumptions.Remove(".");
-			this.goals.Remove(".");
 		}
 
 		public void RefreshAssumptionsAndGoals()
 		{
-			HashSet<string> randomAssumptionsToReuse = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
-			HashSet<string> randomGoalsToReuse = DrawTemporaryAssumptionsOrGoals(ExpressionType.Goals);
+			HashSet<string>
+				randomSimpleAssumptionsToReuse = DrawTemporaryExpressions(this.assumptionsSimple),
+				randomRelatinalAssumptionsToReuse = DrawTemporaryExpressions(this.assumptionsRelational),
+				randomSimpleGoalsToReuse = DrawTemporaryExpressions(this.goalsSimple),
+				randomRelationalGoalsToReuse = DrawTemporaryExpressions(this.goalsRelational);
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Assumptions);
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Goals);
-			this.assumptions.Concat(randomAssumptionsToReuse);
-			this.goals.Concat(randomGoalsToReuse);
+			this.assumptionsSimple.Concat(randomSimpleAssumptionsToReuse);
+			this.assumptionsRelational.Concat(randomRelatinalAssumptionsToReuse);
+			this.goalsSimple.Concat(randomSimpleGoalsToReuse);
+			this.goalsRelational.Concat(randomRelationalGoalsToReuse);
 			foreach (ProvenPacket fact in this.facts)
 			{
-				this.assumptions.Concat(fact.Assumptions);
-				this.goals.Add(fact.Goal);
+				foreach (string assumption in fact.Assumptions)
+					AddAssumptionOrGoal(assumption, DetrmineExpressionComplexity(assumption), ExpressionType.Assumptions);
+				AddAssumptionOrGoal(fact.Goal, DetrmineExpressionComplexity(fact.Goal), ExpressionType.Goals);
 			}
 			// TODO: Assumptions and goals went over 2000 once...
 		}
 
-		private HashSet<string> DrawTemporaryAssumptionsOrGoals(ExpressionType exprType)
+		private HashSet<string> DrawTemporaryExpressions(HashSet<string> exprSet)
 		{
 			int exprToExcludeCount = 0;
 			List<string> outputSet = new List<string>();
-			switch (exprType)
+			if (exprSet.Count > 0)
 			{
-				case ExpressionType.Assumptions:
-					if (assumptions.Count > 0)
-					{
-						outputSet = new List<string>(assumptions);
-						exprToExcludeCount = rng.Next(assumptions.Count);
-					}
-					break;
-				case ExpressionType.Goals:
-					if (goals.Count > 0)
-					{
-						outputSet = new List<string>(goals);
-						exprToExcludeCount = rng.Next(goals.Count);
-					}
-					break;
-				default:
-					break;
+				outputSet = new List<string>(exprSet);
+				exprToExcludeCount = rng.Next(outputSet.Count);
 			}
 			for (int i = 0; i < exprToExcludeCount; ++i)
 				outputSet.RemoveAt(rng.Next(outputSet.Count));
@@ -247,26 +315,34 @@ namespace aProof
 			return false;
 		}
 
-		public void VerifyGoals()
+		public void VerifyAllGoals()
 		{
-			uint drawsCounter, maxDraws, maxProofSearchAttempts;
+			uint
+				maxDraws = SimulationSettings.Default.MAX_REPEATS_FOR_DRAW,
+				maxAttempts = SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS;
+			VerifyGivenGoals(this.assumptionsSimple, this.goalsSimple, maxDraws, maxAttempts);
+			VerifyGivenGoals(this.assumptionsRelational, this.goalsRelational, maxDraws, maxAttempts);
+
+		}
+
+		public void VerifyGivenGoals(HashSet<string> assumptions, HashSet<string> goals, uint maxDraws, uint maxAttempts)
+		{
+			uint drawsCounter;
 			bool isProofFound;
 			ProvenPacket tmpPacket;
 			HashSet<string> currAssumptions;
-			maxDraws = SimulationSettings.Default.MAX_REPEATS_FOR_DRAW;
-			maxProofSearchAttempts = SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS;
 			if (assumptions.Count > 0 && goals.Count > 0)
 			{
-				lock (goals) // TODO: Why this lock is necessary?
-				{
+				//lock (goals) // TODO: Why this lock is necessary?
+				//{
 					foreach (string goal in goals)
 					{
-						for (int i = 0; i < maxProofSearchAttempts; ++i)
+						for (int i = 0; i < maxAttempts; ++i)
 						{
 							drawsCounter = 0;
-							do currAssumptions = DrawTemporaryAssumptionsOrGoals(ExpressionType.Assumptions);
+							do currAssumptions = DrawTemporaryExpressions(assumptions);
 							while (!IsGoalWellMatchedWithAssumptionsCheck(goal, currAssumptions) && ++drawsCounter < maxDraws);
-							isProofFound = prover.SearchForProof(currAssumptions, goal);
+							isProofFound = prover.SearchForProof(currAssumptions, goal); // TODO: może to powoduje konieczność locka?
 							if (isDebugModeOn || isProofFound)
 							{
 								tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetPartialOutput());
@@ -276,13 +352,13 @@ namespace aProof
 								}
 								if (isProofFound)
 								{
-									this.Facts.Add(tmpPacket);
+									this.facts.Add(tmpPacket);
 									break;
 								}
 							}
 						}
 					}
-				}
+				//}
 			}
 		}
 
@@ -290,8 +366,8 @@ namespace aProof
 		{
 			// TODO: Verify in the context of function "CarryConversation"
 			foreach (string assumption in factToAdd.Assumptions)
-				this.assumptions.Add(assumption);
-			this.goals.Add(factToAdd.Goal);
+				AddAssumptionOrGoal(assumption, DetrmineExpressionComplexity(assumption), ExpressionType.Assumptions);
+			AddAssumptionOrGoal(factToAdd.Goal, DetrmineExpressionComplexity(factToAdd.Goal), ExpressionType.Goals);
 			this.facts.Add(factToAdd);
 		}
 

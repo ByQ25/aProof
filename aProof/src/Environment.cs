@@ -128,7 +128,7 @@ namespace aProof
 			{
 				for (int j = 0; j < threads.Length; ++j)
 				{
-					threads[j] = new Thread(new ThreadStart(agents[j].VerifyGoals));
+					threads[j] = new Thread(new ThreadStart(agents[j].VerifyAllGoals));
 					threads[j].Start();
 				}
 				for (int k = 0; k < threads.Length; ++k)

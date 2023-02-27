@@ -10,19 +10,31 @@ namespace aProof
 		public HashSet<string> Assumptions { get; }
 		public string Goal { get; }
 		public string ProofInfo { get; }
-
+		[Newtonsoft.Json.JsonIgnore]
+		public bool IsFresh { get; }
+		
 		public ProvenPacket(
 			string dictionaryHashId,
 			HashSet<string> assumptions,
 			string goal,
-			string proofInfo
+			string proofInfo,
+			bool isFresh
 		)
 		{
 			this.DictionaryHashId = dictionaryHashId;
 			this.Assumptions = assumptions;
 			this.Goal = goal;
 			this.ProofInfo = proofInfo;
+			this.IsFresh = isFresh;
 		}
+
+		[Newtonsoft.Json.JsonConstructor]
+		public ProvenPacket(
+			string dictionaryHashId,
+			HashSet<string> assumptions,
+			string goal,
+			string proofInfo
+		) : this(dictionaryHashId, assumptions, goal, proofInfo, true) { }
 
 		private string DumpBaicDataToString()
 		{
