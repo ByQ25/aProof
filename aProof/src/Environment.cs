@@ -15,9 +15,24 @@ namespace aProof
 		private readonly DictHandler dictionary;
 		private readonly Agent[] agents;
 		private readonly HashSet<ProvenPacket> knownFacts;
+		private int progress;
+		public int Progress
+		{
+			get { return progress; }
+			private set
+			{
+				if (value < 0)
+					progress = 0;
+				else if (value > 100)
+					progress = 100;
+				else
+					progress = value;
+			}
+		}
 
 		public Environment(int suggestedAgentsNumber)
 		{
+			this.progress = 0;
 			this.dictionaryPath = SimulationSettings.Default.DICTIONARY_FILE_PATH;
 			this.knownFactsFilePath = SimulationSettings.Default.KNOWN_FACTS_FILE_PATH;
 			this.dictionary = new DictHandler(dictionaryPath);
@@ -76,6 +91,7 @@ namespace aProof
 				using (StreamReader sr = new StreamReader(filePath, Encoding.UTF8))
 					try { facts = JsonConvert.DeserializeObject<HashSet<ProvenPacket>>(sr.ReadToEnd()); }
 					catch { facts.Clear(); }
+					finally { if (facts == null) facts = new HashSet<ProvenPacket>(); }
 			return facts;
 		}
 
@@ -107,7 +123,7 @@ namespace aProof
 		public void LetAgentsThinkInAdvance(uint iterations)
 		{
 			Thread[] threads = new Thread[this.agents.Length];
-			for (uint i = 0; i < iterations; ++i)
+			for (uint i = 0; i < iterations;)
 			{
 				for (int j = 0; j < threads.Length; ++j)
 				{
@@ -119,7 +135,7 @@ namespace aProof
 				GatherFactsFoundByAgents();
 				for (int a = 0; a < agents.Length; ++a)
 					agents[a].RefreshAssumptionsAndGoals();
-				Console.WriteLine(i); // TODO: Add proper progress indicator
+				this.Progress = (int)(++i * 100.0 / iterations);
 			}
 			SaveProofsToJson(this.knownFactsFilePath, this.knownFacts);
 		}

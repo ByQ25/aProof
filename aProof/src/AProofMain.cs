@@ -1,27 +1,13 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace aProof
 {
 	class AProofMain
 	{
-		static void Main(string[] args)
+		static void Main()
 		{
-			char key;
-			Environment env = new Environment(2);
-			Console.Title = "aProof";
-			Console.WriteLine("The environment with agents has been initialized.\n");
-			Console.WriteLine("Please select an action to execute by pressing corresponding numeric key:");
-			Console.WriteLine("1. Do the thinking only\n2. Carry a conversation between agents\n3. Quit\n");
-			do
-			{
-				key = Console.ReadKey(true).KeyChar;
-				switch (key)
-				{
-					case '1': env.LetAgentsThinkInAdvance(10); break;
-					case '2': env.CarryConversation(10); break;
-				}
-			} while (key != '3');
-
+			Application.Run(new MainForm());
 		}
 
 		public class AProofException : ApplicationException
