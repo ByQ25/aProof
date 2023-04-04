@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -38,14 +39,18 @@ namespace aProof
 
 		public bool SearchForProof(string input)
 		{
-			string output;
-			int maxSearchTime = (int)SimulationSettings.Default.MAX_PROOF_SEARCH_TIME;
+			StringBuilder
+				stdOutput = new StringBuilder(4096),
+				stdError = new StringBuilder(4096);
+			int
+				maxSearchTimeInSec = (int)SimulationSettings.Default.MAX_PROOF_SEARCH_TIME,
+				maxSearchTimeInMiliSec = 1000 * maxSearchTimeInSec;
 			using (Process proverProc = new Process())
 			{
 				proverProc.StartInfo = new ProcessStartInfo
 				{
 					FileName = proverPath,
-					Arguments = string.Concat("-t ", maxSearchTime),
+					Arguments = string.Concat("-t ", maxSearchTimeInSec),
 					CreateNoWindow = true,
 					RedirectStandardInput = true,
 					RedirectStandardOutput = true,
@@ -53,17 +58,42 @@ namespace aProof
 					UseShellExecute = false,
 					WindowStyle = ProcessWindowStyle.Hidden
 				};
-
-				proverProc.Start();
-				proverProc.StandardInput.Write(input);
-				proverProc.StandardInput.Close();
-				output = proverProc.StandardOutput.ReadToEnd();
-				proverProc.WaitForExit(2000 * maxSearchTime);
-				if (!proverProc.HasExited)
-					proverProc.Kill();
+				using (AutoResetEvent outputWaitHandle = new AutoResetEvent(false))
+				using (AutoResetEvent errorWaitHandle = new AutoResetEvent(false))
+				{
+					proverProc.OutputDataReceived += (sender, e) =>
+					{
+						if (e.Data == null)
+							outputWaitHandle.Set();
+						else
+							stdOutput.AppendLine(e.Data);
+					};
+					proverProc.ErrorDataReceived += (sender, e) =>
+					{
+						if (e.Data == null)
+							errorWaitHandle.Set();
+						else
+							stdError.AppendLine(e.Data);
+					};
+					proverProc.Start();
+					proverProc.StandardInput.Write(input);
+					proverProc.StandardInput.Close();
+					proverProc.BeginOutputReadLine();
+					proverProc.BeginErrorReadLine();
+					if (
+						!proverProc.WaitForExit(maxSearchTimeInMiliSec)
+						|| !outputWaitHandle.WaitOne(maxSearchTimeInMiliSec)
+						|| !errorWaitHandle.WaitOne(maxSearchTimeInMiliSec)
+					)
+					{
+						proverProc.CancelOutputRead();
+						proverProc.CancelErrorRead();
+						proverProc.Kill();
+					}
+				}
 			}
 			outputProcessor.Reset();
-			return outputProcessor.ProcessProverOutput(output);
+			return outputProcessor.ProcessProverOutput(stdOutput.ToString());
 		}
 
 		public bool SearchForProof(HashSet<string> assumptions, HashSet<string> goals)
