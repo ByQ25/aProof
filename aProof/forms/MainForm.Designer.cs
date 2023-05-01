@@ -70,7 +70,7 @@
 			this.tcButton.Name = "tcButton";
 			this.tcButton.Size = new System.Drawing.Size(95, 27);
 			this.tcButton.TabIndex = 3;
-			this.tcButton.Text = "Test Chat";
+			this.tcButton.Text = "prop.button.test_chat";
 			this.tcButton.UseVisualStyleBackColor = false;
 			this.tcButton.Click += new System.EventHandler(this.TcButton_Click);
 			// 
@@ -153,7 +153,7 @@
 			this.settingsButton.Name = "settingsButton";
 			this.settingsButton.Size = new System.Drawing.Size(492, 27);
 			this.settingsButton.TabIndex = 3;
-			this.settingsButton.Text = "Settings";
+			this.settingsButton.Text = "prop.button.settings";
 			this.settingsButton.UseVisualStyleBackColor = false;
 			this.settingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
 			this.settingsButton.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
@@ -180,7 +180,7 @@
 			this.latiaButton.Name = "latiaButton";
 			this.latiaButton.Size = new System.Drawing.Size(492, 27);
 			this.latiaButton.TabIndex = 1;
-			this.latiaButton.Text = "Let Agents Think in Advance";
+			this.latiaButton.Text = "prop.button.let_agents_think";
 			this.latiaButton.UseVisualStyleBackColor = false;
 			this.latiaButton.Click += new System.EventHandler(this.LatiaButton_Click);
 			this.latiaButton.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
@@ -195,7 +195,7 @@
 			this.ccButton.Name = "ccButton";
 			this.ccButton.Size = new System.Drawing.Size(492, 27);
 			this.ccButton.TabIndex = 0;
-			this.ccButton.Text = "Carry Conversation";
+			this.ccButton.Text = "prop.button.carry_conversation";
 			this.ccButton.UseVisualStyleBackColor = false;
 			this.ccButton.Click += new System.EventHandler(this.CcButton_Click);
 			this.ccButton.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
