@@ -18,11 +18,13 @@ namespace aProof
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
 		private readonly HashSet<ProvenPacket> usedFacts, facts;	// Facts = proven goals, initially empty because facts must be proven
+		public uint Identity { get; }
 		public HashSet<ProvenPacket> Facts { get { return new HashSet<ProvenPacket>(facts); } }
 		public int GetNumberOfKnownNewFacts { get { return GetFreshFacts().Count; } } 
 
-		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals, int rngSeed)
+		public Agent(DictHandler dictionary, HashSet<string> assumptions, HashSet<string> goals, int rngSeed, uint id)
 		{
+			this.Identity = id;
 			this.isDebugModeOn = SimulationSettings.Default.IS_IN_DEBUG_MODE;
 			this.debugLogFilePath = SimulationSettings.Default.DEBUG_FILE_PATH;
 			this.dictionary = dictionary;
@@ -38,11 +40,13 @@ namespace aProof
 			this.facts = new HashSet<ProvenPacket>();
 		}
 
-		public Agent(DictHandler dictionary, int rngSeed) : this(dictionary, new HashSet<string>(), new HashSet<string>(), rngSeed)
+		public Agent(DictHandler dictionary, int rngSeed, uint id) : this(dictionary, new HashSet<string>(), new HashSet<string>(), rngSeed, id)
 		{
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Assumptions);
 			DrawInitialAssumptionsOrGoals(dictionary, ExpressionType.Goals);
 		}
+
+		public Agent(DictHandler dictionary, int rngSeed) : this(dictionary, rngSeed, (uint)new Random().Next(1, 100)) { }
 
 		private string ReturnSign()
 		{

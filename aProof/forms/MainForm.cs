@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Drawing;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace aProof
@@ -12,6 +14,8 @@ namespace aProof
 		private Task currentTask;
 		private Random rng;
 		private readonly Environment env;
+		private readonly List<Tuple<uint, string>> ReadyMsgs;
+		private Color[] availableChatBubbleColors;
 
 		public MainForm()
 		{
@@ -23,6 +27,13 @@ namespace aProof
 			this.rng = new Random();
 			this.titleLabel.Text = typeof(AProofMain).Namespace;
 			this.env = new Environment((int)SimulationSettings.Default.NUMBER_OF_AGENTS);
+			this.ReadyMsgs = this.env.ReadyMsgs;
+			this.availableChatBubbleColors = new Color[] {
+				Color.HotPink, Color.OrangeRed, Color.Lime, Color.Khaki,
+				Color.Yellow, Color.YellowGreen, Color.Turquoise, Color.Silver,
+				Color.Azure, Color.Chartreuse, Color.Gold, Color.MediumSeaGreen,
+				Color.DarkOrange, Color.DeepSkyBlue, Color.GreenYellow, Color.Orchid
+			};
 		}
 
 		private void LoadTranslations()
@@ -33,7 +44,7 @@ namespace aProof
 			this.settingsButton.Text = src.PropTranslator.TranslateProp("prop.button.settings");
 		}
 
-		private void StartWorkingThread(Action<uint> action, uint input)
+		private void StartWorkingThread(Action<uint> action, uint input, bool shouldRenderMsgs)
 		{
 			TurnOnWorkInProgressMode();
 			this.currentTask = new Task(
@@ -42,6 +53,13 @@ namespace aProof
 			);
 			this.currentTask.Start();
 			this.mainGuiTimer.Start();
+			if (shouldRenderMsgs)
+				this.chatRendererTimer.Start();
+		}
+
+		private void StartWorkingThread(Action<uint> action, uint input)
+		{
+			StartWorkingThread(action, input, false);
 		}
 
 		private void TurnOnWorkInProgressMode()
@@ -71,12 +89,34 @@ namespace aProof
 				(controlObj as Button).BackColor = color;
 		}
 
+		private Color ChooseChatBubbleColor(uint authorId)
+		{
+			return availableChatBubbleColors[authorId % availableChatBubbleColors.Length];
+		}
+
+		private string ChooseAuthorName(uint authorId)
+		{
+			return string.Format("A{0}", authorId);
+		}
+
+		public void AddChatMessage(string author, string inText, Color chatBubbleColor)
+		{
+			controls.MessageBox msgBox = new controls.MessageBox(author, inText, chatBubbleColor);
+			contentPanel.SuspendLayout();
+			contentPanel.Controls.Add(msgBox);
+			msgBox.BringToFront();
+			contentPanel.ResumeLayout();
+			contentPanel.ScrollControlIntoView(msgBox);
+		}
+
 		private void CcButton_Click(object sender, EventArgs e)
 		{
 			contentPanel.Controls.Clear();
+			availableChatBubbleColors = availableChatBubbleColors.OrderBy(i => rng.Next()).ToArray();
 			StartWorkingThread(
 				env.CarryConversation,
-				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS
+				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS,
+				true
 			);
 		}
 
@@ -106,17 +146,6 @@ namespace aProof
 				);
 			defaultEditor = defaultEditor.Replace(" %1", "");
 			System.Diagnostics.Process.Start(defaultEditor, settingsPath);
-		}
-
-		private void MainGuiTimer_Tick(object sender, EventArgs e)
-		{
-			progressBar1.Value = env.Progress;
-			progressBar1.Update();
-			if (currentTask != null && currentTask.IsCompleted)
-			{
-				TurnOffWorkInProgressMode();
-				this.mainGuiTimer.Stop();
-			}
 		}
 
 		private void MinimizeLabel_Click(object sender, EventArgs e)
@@ -162,20 +191,10 @@ namespace aProof
 			}
 		}
 
-		public void AddChatMessage(string author, string inText)
-		{
-			controls.MessageBox msgBox = new controls.MessageBox(author, inText);
-			contentPanel.SuspendLayout();
-			contentPanel.Controls.Add(msgBox);
-			msgBox.BringToFront();
-			contentPanel.ResumeLayout();
-			contentPanel.ScrollControlIntoView(msgBox);
-		}
-
 		private void TcButton_Click(object sender, EventArgs e)
 		{
 			string
-				author = string.Format("A{0}", rng.Next(1, 100)),
+				author = ChooseAuthorName((uint)rng.Next(1, 100)),
 				message = "";
 			switch (rng.Next(0,3))
 			{
@@ -184,13 +203,54 @@ namespace aProof
 				case 2: message = "Bresaola capicola ham filet mignon jowl pig."; break;
 				default: message = "Epic fail, my friend."; break;
 			}
-			AddChatMessage(author, message);
+			AddChatMessage(
+				author,
+				message,
+				ChooseChatBubbleColor(uint.Parse(author.Substring(1, author.Length - 1)))
+			);
 		}
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Control && e.Shift && e.KeyCode == Keys.T)
 				tcButton.Visible = !tcButton.Visible;
+		}
+
+		private void MainGuiTimer_Tick(object sender, EventArgs e)
+		{
+			progressBar1.Value = env.Progress;
+			progressBar1.Update();
+			if (currentTask != null && currentTask.IsCompleted)
+			{
+				TurnOffWorkInProgressMode();
+				this.mainGuiTimer.Stop();
+			}
+		}
+
+		private void ChatRendererTimer_Tick(object sender, EventArgs e)
+		{
+			int
+				i = contentPanel.Controls.Count,
+				msgsCount = 0;
+			lock (ReadyMsgs)
+			{
+				msgsCount = ReadyMsgs.Count;
+				if (msgsCount > 0 && i < msgsCount)
+				{
+					Tuple<uint, string> msg = ReadyMsgs[i++];
+					AddChatMessage(
+						ChooseAuthorName(msg.Item1),
+						msg.Item2,
+						ChooseChatBubbleColor(msg.Item1)
+					);
+				}
+				msgsCount = ReadyMsgs.Count;
+			}
+			if (
+				currentTask != null 
+				&& currentTask.IsCompleted
+				&& i == msgsCount
+			) this.chatRendererTimer.Stop();
 		}
 	}
 }

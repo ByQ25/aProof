@@ -41,6 +41,7 @@
 			this.latiaButton = new System.Windows.Forms.Button();
 			this.ccButton = new System.Windows.Forms.Button();
 			this.mainGuiTimer = new System.Windows.Forms.Timer(this.components);
+			this.chatRendererTimer = new System.Windows.Forms.Timer(this.components);
 			this.headerPanel.SuspendLayout();
 			this.footerPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -206,6 +207,10 @@
 			this.mainGuiTimer.Interval = 1000;
 			this.mainGuiTimer.Tick += new System.EventHandler(this.MainGuiTimer_Tick);
 			// 
+			// chatRendererTimer
+			// 
+			this.chatRendererTimer.Tick += new System.EventHandler(this.ChatRendererTimer_Tick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -244,5 +249,6 @@
 		private System.Windows.Forms.Button settingsButton;
 		private System.Windows.Forms.Timer mainGuiTimer;
 		private System.Windows.Forms.Button tcButton;
+		private System.Windows.Forms.Timer chatRendererTimer;
 	}
 }

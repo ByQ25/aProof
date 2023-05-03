@@ -29,12 +29,12 @@ namespace aProof
 					progress = value;
 			}
 		}
-		public List<string> ReadyMsgs { get; }
+		public List<Tuple<uint, string>> ReadyMsgs { get; }
 
 		public Environment(int suggestedAgentsNumber)
 		{
 			this.progress = 0;
-			this.ReadyMsgs = new List<string>();
+			this.ReadyMsgs = new List<Tuple<uint, string>>();
 			this.dictionaryPath = SimulationSettings.Default.DICTIONARY_FILE_PATH;
 			this.knownFactsFilePath = SimulationSettings.Default.KNOWN_FACTS_FILE_PATH;
 			this.dictionary = new DictHandler(dictionaryPath);
@@ -56,7 +56,7 @@ namespace aProof
 				agentsNumber = rng.Next(maxAgentsNumber) + 1;
 			agents = new Agent[agentsNumber];
 			for (int a = 0; a < agentsNumber;)
-				agents[a++] = new Agent(dictionary, rng.Next());
+				agents[a++] = new Agent(dictionary, rng.Next(), (uint)a);
 			return agents;
 		}
 
@@ -154,7 +154,15 @@ namespace aProof
 					factWithMessage = factWithMessage == null ?
 						agentsWithFreshFacts[a].ChooseFactAndSpeak(null)
 						: agentsWithFreshFacts[a].ChooseFactAndSpeak(factWithMessage.Item1);
-					lock (ReadyMsgs) { ReadyMsgs.Add(factWithMessage.Item2); }
+					lock (ReadyMsgs)
+					{
+						ReadyMsgs.Add(
+							new Tuple<uint, string>(
+								agentsWithFreshFacts[a].Identity,
+								factWithMessage.Item2
+							)
+						);
+					}
 					DistributeNewFact(factWithMessage.Item1, 1);
 				}
 				this.Progress = (int)(++i * 100.0 / iterations);

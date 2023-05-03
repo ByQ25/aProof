@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace aProof.controls
 {
@@ -22,10 +23,13 @@ namespace aProof.controls
 			this.Dock = DockStyle.Top;
 		}
 
-		public MessageBox(string author, string inText) : this()
+		public MessageBox(string author, string inText, Color chatBubbleColor) : this()
 		{
 			this.AuthorId = author;
 			this.Message = inText;
+			this.msgPanel.BackColor = chatBubbleColor;
 		}
+
+		public MessageBox(string author, string inText) : this(author, inText, Color.DarkOrange) { }
 	}
 }
