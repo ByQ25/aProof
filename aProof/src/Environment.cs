@@ -29,10 +29,12 @@ namespace aProof
 					progress = value;
 			}
 		}
+		public List<string> ReadyMsgs { get; }
 
 		public Environment(int suggestedAgentsNumber)
 		{
 			this.progress = 0;
+			this.ReadyMsgs = new List<string>();
 			this.dictionaryPath = SimulationSettings.Default.DICTIONARY_FILE_PATH;
 			this.knownFactsFilePath = SimulationSettings.Default.KNOWN_FACTS_FILE_PATH;
 			this.dictionary = new DictHandler(dictionaryPath);
@@ -115,11 +117,6 @@ namespace aProof
 			}
 		}
 
-		private void WriteMessage(string input)
-		{
-			throw new NotImplementedException();
-		}
-
 		public void LetAgentsThinkInAdvance(uint iterations)
 		{
 			Thread[] threads = new Thread[this.agents.Length];
@@ -140,25 +137,50 @@ namespace aProof
 			SaveProofsToJson(this.knownFactsFilePath, this.knownFacts);
 		}
 
-		public void CarryConversation(uint iterations)
+		public void CarryConversation(uint iterations, uint thinkingReps, bool shouldFormatOutputAsMessage)
 		{
 			Agent[] agentsWithFreshFacts = GetAgentsWithFreshFacts();
-			Tuple<ProvenPacket, string> factWithMessage;
-			for (int i = 0; i < iterations; ++i)
+			Tuple<ProvenPacket, string> factWithMessage = null;
+			this.ReadyMsgs.Clear();
+			for (int i = 0; i < iterations;)
 			{
 				while (agentsWithFreshFacts.Length < 1)
 				{
-					LetAgentsThinkInAdvance(SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS);
+					LetAgentsThinkInAdvance(thinkingReps);
 					agentsWithFreshFacts = GetAgentsWithFreshFacts();
 				}
 				for (int a = 0; a < agentsWithFreshFacts.Length; ++a)
 				{
-					factWithMessage = agentsWithFreshFacts[a].ChooseFactAndSpeak();
+					factWithMessage = factWithMessage == null ?
+						agentsWithFreshFacts[a].ChooseFactAndSpeak(null)
+						: agentsWithFreshFacts[a].ChooseFactAndSpeak(factWithMessage.Item1);
+					lock (ReadyMsgs) { ReadyMsgs.Add(factWithMessage.Item2); }
 					DistributeNewFact(factWithMessage.Item1, 1);
-					WriteMessage(factWithMessage.Item2);
 				}
+				this.Progress = (int)(++i * 100.0 / iterations);
 			}
-			throw new NotImplementedException();
+		}
+
+		public void CarryConversation(uint iterations, uint thinkingReps)
+		{
+			CarryConversation(iterations, thinkingReps, true);
+		}
+
+		public void CarryConversation(uint iterations, bool shouldFormatOutputAsMessage)
+		{
+			CarryConversation(
+				iterations,
+				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS,
+				shouldFormatOutputAsMessage
+			);
+		}
+
+		public void CarryConversation(uint iterations)
+		{
+			CarryConversation(
+				iterations,
+				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS
+			);
 		}
 	}
 }

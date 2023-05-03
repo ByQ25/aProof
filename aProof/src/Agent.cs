@@ -370,10 +370,11 @@ namespace aProof
 			return new HashSet<ProvenPacket>(this.facts.Except(usedFacts));
 		}
 
-		public Tuple<ProvenPacket, string> ChooseFactAndSpeak()
+		public Tuple<ProvenPacket, string> ChooseFactAndSpeak(ProvenPacket? previousFact)
 		{
 			HashSet<ProvenPacket> stillFreshFacts = GetFreshFacts();
 			int numberOfFreshFacts = stillFreshFacts.Count;
+			// TODO: Choose fresh fact closest to previous fact
 			ProvenPacket chosenFact = stillFreshFacts.ElementAt(rng.Next(numberOfFreshFacts));
 			string message = "Temporary chat message.";
 			// TODO: string message = translator.Translate(chosenFact.ProofInfo, userLanguage);
