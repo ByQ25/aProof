@@ -76,7 +76,7 @@
     <Compile Include="src\IProverOutputProcessor.cs" />
     <Compile Include="src\AProofMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\ITranslator.cs" />
+    <Compile Include="src\PropTranslator.cs" />
     <Compile Include="src\ProvenPacket.cs" />
     <Compile Include="src\ProverHelper.cs" />
     <Compile Include="src\ProverOutputProcessor.cs" />
@@ -85,7 +85,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>SimulationSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="src\Translator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -114,6 +113,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\ContentPanel_Background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\en_EN.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\pl_PL.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

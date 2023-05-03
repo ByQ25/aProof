@@ -68,7 +68,7 @@
 			this.tcButton.Font = new System.Drawing.Font("Rubik", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.tcButton.Location = new System.Drawing.Point(11, 11);
 			this.tcButton.Name = "tcButton";
-			this.tcButton.Size = new System.Drawing.Size(95, 27);
+			this.tcButton.Size = new System.Drawing.Size(128, 27);
 			this.tcButton.TabIndex = 3;
 			this.tcButton.Text = "prop.button.test_chat";
 			this.tcButton.UseVisualStyleBackColor = false;

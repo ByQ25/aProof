@@ -1,0 +1,6 @@
+prop.button.test_chat=Testuj chat
+prop.button.carry_conversation=Przeprowadź rozmowę
+prop.button.let_agents_think=Daj pomyśleć agentom zawczasu
+prop.button.settings=Ustawienia
+prop.settings.messagebox.text=Aplikacja musi zostać zrestartowana w celu wczytania nowych ustawień. Wykonaj, proszę, restart aplikacji po wprowadzeniu ustawień.
+prop.settings.messagebox.title=Akcja wymaga restartu

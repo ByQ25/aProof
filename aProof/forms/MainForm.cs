@@ -16,12 +16,21 @@ namespace aProof
 		public MainForm()
 		{
 			InitializeComponent();
+			LoadTranslations();
 			this.tcButton.Visible = false;
 			this.Icon = Properties.Resources.aProof_Icon;
 			this.isDragging = false;
 			this.rng = new Random();
 			this.titleLabel.Text = typeof(AProofMain).Namespace;
 			this.env = new Environment((int)SimulationSettings.Default.NUMBER_OF_AGENTS);
+		}
+
+		private void LoadTranslations()
+		{
+			this.tcButton.Text = src.PropTranslator.TranslateProp("prop.button.test_chat");
+			this.ccButton.Text = src.PropTranslator.TranslateProp("prop.button.carry_conversation");
+			this.latiaButton.Text = src.PropTranslator.TranslateProp("prop.button.let_agents_think");
+			this.settingsButton.Text = src.PropTranslator.TranslateProp("prop.button.settings");
 		}
 
 		private void StartWorkingThread(Action<uint> action, uint input)
@@ -83,8 +92,8 @@ namespace aProof
 		private void SettingsButton_Click(object sender, EventArgs e)
 		{
 			MessageBox.Show(
-				"The app has to be restarted to reload new settings. Please, restart the application after changing settings.",
-				"Restart required",
+				src.PropTranslator.TranslateProp("prop.settings.messagebox.text"),
+				src.PropTranslator.TranslateProp("prop.settings.messagebox.title"),
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Information
 			);

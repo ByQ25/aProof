@@ -17,7 +17,6 @@ namespace aProof
 		private readonly HashSet<string> assumptionsSimple, assumptionsRelational, goalsSimple, goalsRelational;
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
-		private readonly ITranslator translator;
 		private readonly HashSet<ProvenPacket> usedFacts, facts;	// Facts = proven goals, initially empty because facts must be proven
 		public HashSet<ProvenPacket> Facts { get { return new HashSet<ProvenPacket>(facts); } }
 		public int GetNumberOfKnownNewFacts { get { return GetFreshFacts().Count; } } 
@@ -321,7 +320,6 @@ namespace aProof
 				maxAttempts = SimulationSettings.Default.MAX_PROOF_SEARCH_ATTEMPTS;
 			VerifyGivenGoals(this.assumptionsSimple, this.goalsSimple, maxDraws, maxAttempts);
 			VerifyGivenGoals(this.assumptionsRelational, this.goalsRelational, maxDraws, maxAttempts);
-
 		}
 
 		public void VerifyGivenGoals(HashSet<string> assumptions, HashSet<string> goals, uint maxDraws, uint maxAttempts)
@@ -377,8 +375,8 @@ namespace aProof
 			HashSet<ProvenPacket> stillFreshFacts = GetFreshFacts();
 			int numberOfFreshFacts = stillFreshFacts.Count;
 			ProvenPacket chosenFact = stillFreshFacts.ElementAt(rng.Next(numberOfFreshFacts));
-			string userLanguage = System.Globalization.CultureInfo.InstalledUICulture.Name;
-			string message = translator.Translate(chosenFact.ProofInfo, userLanguage);
+			string message = "Temporary chat message.";
+			// TODO: string message = translator.Translate(chosenFact.ProofInfo, userLanguage);
 			this.usedFacts.Add(chosenFact);
 			return new Tuple<ProvenPacket, string>(chosenFact, message);
 		}

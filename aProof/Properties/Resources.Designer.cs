@@ -79,5 +79,33 @@ namespace aProof.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu prop.button.carry_conversation=Carry Conversation
+        ///prop.button.let_agents_think=Let Agents Think in Advance
+        ///prop.button.settings=Settings
+        ///prop.button.test_chat=Test Chat
+        ///prop.settings.messagebox.text=The app has to be restarted to reload new settings. Please, restart the application after changing settings.
+        ///prop.settings.messagebox.title=Restart required.
+        /// </summary>
+        internal static string en_EN {
+            get {
+                return ResourceManager.GetString("en_EN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu prop.button.carry_conversation=Przeprowad� rozmow�
+        ///prop.button.let_agents_think=Daj pomy�le� agentom zawczasu
+        ///prop.button.settings=Ustawienia
+        ///prop.button.test_chat=Testuj chat
+        ///prop.settings.messagebox.text=Aplikacja musi zosta� zrestartowana w celu prze�adowania wczytania nowych ustawie�. Wykonaj, prosz�, restart aplikacji po wprowadzeniu ustawie�.
+        ///prop.settings.messagebox.title=Akcja wymaga restartu.
+        /// </summary>
+        internal static string pl_PL {
+            get {
+                return ResourceManager.GetString("pl_PL", resourceCulture);
+            }
+        }
     }
 }
