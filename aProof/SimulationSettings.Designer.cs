@@ -97,7 +97,7 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public uint DEFAULT_THINKING_ITERATIONS {
             get {
                 return ((uint)(this["DEFAULT_THINKING_ITERATIONS"]));
