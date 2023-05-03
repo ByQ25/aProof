@@ -35,6 +35,7 @@
 			this.minimizeLabel = new System.Windows.Forms.Label();
 			this.exitLabel = new System.Windows.Forms.Label();
 			this.contentPanel = new System.Windows.Forms.Panel();
+			this.instructionLabel = new System.Windows.Forms.Label();
 			this.footerPanel = new System.Windows.Forms.Panel();
 			this.settingsButton = new System.Windows.Forms.Button();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -43,6 +44,7 @@
 			this.mainGuiTimer = new System.Windows.Forms.Timer(this.components);
 			this.chatRendererTimer = new System.Windows.Forms.Timer(this.components);
 			this.headerPanel.SuspendLayout();
+			this.contentPanel.SuspendLayout();
 			this.footerPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -126,11 +128,24 @@
 			this.contentPanel.BackgroundImage = global::aProof.Properties.Resources.ContentPanel_Background;
 			this.contentPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.contentPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.contentPanel.Controls.Add(this.instructionLabel);
 			this.contentPanel.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.contentPanel.Location = new System.Drawing.Point(0, 50);
 			this.contentPanel.Name = "contentPanel";
 			this.contentPanel.Size = new System.Drawing.Size(500, 620);
 			this.contentPanel.TabIndex = 1;
+			// 
+			// instructionLabel
+			// 
+			this.instructionLabel.AutoSize = true;
+			this.instructionLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.instructionLabel.Font = new System.Drawing.Font("Monotype Corsiva", 17.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
+			this.instructionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+			this.instructionLabel.Location = new System.Drawing.Point(0, 590);
+			this.instructionLabel.Name = "instructionLabel";
+			this.instructionLabel.Size = new System.Drawing.Size(425, 28);
+			this.instructionLabel.TabIndex = 0;
+			this.instructionLabel.Text = "prop.label.saving_conversation_instruction";
 			// 
 			// footerPanel
 			// 
@@ -230,6 +245,8 @@
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.headerPanel.ResumeLayout(false);
 			this.headerPanel.PerformLayout();
+			this.contentPanel.ResumeLayout(false);
+			this.contentPanel.PerformLayout();
 			this.footerPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -250,5 +267,6 @@
 		private System.Windows.Forms.Timer mainGuiTimer;
 		private System.Windows.Forms.Button tcButton;
 		private System.Windows.Forms.Timer chatRendererTimer;
+		private System.Windows.Forms.Label instructionLabel;
 	}
 }

@@ -4,3 +4,4 @@ prop.button.let_agents_think=Let Agents Think in Advance
 prop.button.settings=Settings
 prop.settings.messagebox.text=The app has to be restarted to reload new settings. Please, restart the application after changing settings.
 prop.settings.messagebox.title=Restart required
+prop.label.saving_conversation_instruction=Ctrl + S - will save the conversation

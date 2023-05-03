@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -42,6 +43,7 @@ namespace aProof
 			this.ccButton.Text = src.PropTranslator.TranslateProp("prop.button.carry_conversation");
 			this.latiaButton.Text = src.PropTranslator.TranslateProp("prop.button.let_agents_think");
 			this.settingsButton.Text = src.PropTranslator.TranslateProp("prop.button.settings");
+			this.instructionLabel.Text = src.PropTranslator.TranslateProp("prop.label.saving_conversation_instruction");
 		}
 
 		private void StartWorkingThread(Action<uint> action, uint input, bool shouldRenderMsgs)
@@ -107,6 +109,21 @@ namespace aProof
 			msgBox.BringToFront();
 			contentPanel.ResumeLayout();
 			contentPanel.ScrollControlIntoView(msgBox);
+		}
+
+		private void SaveConversationToFile()
+		{
+			SaveFileDialog sfd = new SaveFileDialog
+			{
+				InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory),
+				AddExtension = true,
+				DefaultExt = "txt",
+				Filter = "Text files (*.txt)|*.txt"
+			};
+			if (sfd.ShowDialog() == DialogResult.OK && sfd.CheckPathExists)
+				using (StreamWriter sw = new StreamWriter(sfd.OpenFile(), System.Text.Encoding.UTF8))
+					foreach (Tuple<uint, string> msg in ReadyMsgs)
+						sw.WriteLine(string.Format("Agent {0}:\n{1}\n", msg.Item1, msg.Item2));
 		}
 
 		private void CcButton_Click(object sender, EventArgs e)
@@ -214,6 +231,8 @@ namespace aProof
 		{
 			if (e.Control && e.Shift && e.KeyCode == Keys.T)
 				tcButton.Visible = !tcButton.Visible;
+			if (currentTask != null && currentTask.IsCompleted && e.Control && e.KeyCode == Keys.S)
+				SaveConversationToFile();
 		}
 
 		private void MainGuiTimer_Tick(object sender, EventArgs e)

@@ -4,3 +4,4 @@ prop.button.let_agents_think=Daj pomyśleć agentom zawczasu
 prop.button.settings=Ustawienia
 prop.settings.messagebox.text=Aplikacja musi zostać zrestartowana w celu wczytania nowych ustawień. Wykonaj, proszę, restart aplikacji po wprowadzeniu ustawień.
 prop.settings.messagebox.title=Akcja wymaga restartu
+prop.label.saving_conversation_instruction=Ctrl + S - zapisze rozmowę
