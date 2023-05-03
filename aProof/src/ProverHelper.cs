@@ -116,9 +116,9 @@ namespace aProof
 			output.Append(outputProcessor.Proof);
 			if (outputProcessor.IsProofFound)
 				output.Append(
-					string.Format("\nUdowodniono. Liczba dowodów: {0}\n", outputProcessor.NumberOfProofs)
+					string.Format("\nFact proven. Number of proofs: {0}\n", outputProcessor.NumberOfProofs)
 				);
-			else output.Append("\nBrak dowodu.\n");
+			else output.Append("\nNo proof.\n");
 
 			return output.ToString();
 		}
