@@ -41,7 +41,7 @@ namespace aProof
 			this.knownFacts = FilterProofsByDictionary(LoadProofsFromJson(knownFactsFilePath), this.dictionary.HashId);
 			this.agents = InitializeAgents(suggestedAgentsNumber);
 			for (int i = 0; i < this.knownFacts.Count; ++i)
-				agents[i % agents.Length].AddExternalKnownFact(this.knownFacts.ElementAt(i));
+				agents[i % agents.Length].AddExternalKnownFact(this.knownFacts.ElementAt(i), false);
 		}
 
 		public Environment(string dictionaryPath) : this(0) { }
@@ -113,7 +113,7 @@ namespace aProof
 				if (a == sourceAgentId)
 					continue;
 				else
-					agents[a].AddExternalKnownFact(fact);
+					agents[a].AddExternalKnownFact(fact, true);
 			}
 		}
 

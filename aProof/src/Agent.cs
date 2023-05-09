@@ -360,13 +360,14 @@ namespace aProof
 			}
 		}
 
-		public void AddExternalKnownFact(ProvenPacket factToAdd)
+		public void AddExternalKnownFact(ProvenPacket factToAdd, bool wasUsed)
 		{
-			// TODO: Verify in the context of function "CarryConversation"
 			foreach (string assumption in factToAdd.Assumptions)
 				AddAssumptionOrGoal(assumption, DetrmineExpressionComplexity(assumption), ExpressionType.Assumptions);
 			AddAssumptionOrGoal(factToAdd.Goal, DetrmineExpressionComplexity(factToAdd.Goal), ExpressionType.Goals);
 			this.facts.Add(factToAdd);
+			if (wasUsed)
+				this.usedFacts.Add(factToAdd);
 		}
 
 		private HashSet<ProvenPacket> GetFreshFacts()
