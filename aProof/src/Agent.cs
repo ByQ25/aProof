@@ -377,12 +377,31 @@ namespace aProof
 
 		public Tuple<ProvenPacket, string> ChooseFactAndSpeak(ProvenPacket? previousFact)
 		{
+			ProvenPacket chosenFact = new ProvenPacket();
 			HashSet<ProvenPacket> stillFreshFacts = GetFreshFacts();
-			int numberOfFreshFacts = stillFreshFacts.Count;
-			// TODO: Choose fresh fact closest to previous fact
-			ProvenPacket chosenFact = stillFreshFacts.ElementAt(rng.Next(numberOfFreshFacts));
+			bool areFactsSimilar = false;
+			int
+				tmpScore = -1,
+				currentBestScore = -1,
+				numberOfFreshFacts = stillFreshFacts.Count;
+			if (previousFact != null && numberOfFreshFacts >  1 && rng.Next(4) < 3)
+			{
+				foreach (ProvenPacket fact in stillFreshFacts)
+				{
+					tmpScore = (int)fact.GetSimilarityScore((ProvenPacket)previousFact);
+					if (tmpScore > currentBestScore)
+					{
+						chosenFact = fact;
+						currentBestScore = tmpScore;
+					}
+				}
+				if (currentBestScore >= chosenFact.Assumptions.Count / 2)
+					areFactsSimilar = true;
+			}
+			else
+				chosenFact = stillFreshFacts.ElementAt(rng.Next(numberOfFreshFacts));
 			string message = "Temporary chat message.";
-			// TODO: string message = translator.Translate(chosenFact.ProofInfo, userLanguage);
+			// TODO: string message = MessageFormatter.PrepareMessage(chosenFact.ProofInfo, areFactsSimilar);
 			this.usedFacts.Add(chosenFact);
 			return new Tuple<ProvenPacket, string>(chosenFact, message);
 		}

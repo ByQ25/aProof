@@ -40,6 +40,17 @@ namespace aProof
 			return output.ToString();
 		}
 
+		public uint GetSimilarityScore(ProvenPacket other)
+		{
+			uint score = 0;
+			foreach (string assumption in this.Assumptions)
+				if (other.Assumptions.Contains(assumption))
+					++score;
+			if (this.Goal == other.Goal)
+				++score;
+			return score;
+		}
+
 		public override string ToString()
 		{
 			StringBuilder output = new StringBuilder(16384);
