@@ -76,6 +76,7 @@
     <Compile Include="src\IProverOutputProcessor.cs" />
     <Compile Include="src\AProofMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\MessageFormatter.cs" />
     <Compile Include="src\PropTranslator.cs" />
     <Compile Include="src\ProvenPacket.cs" />
     <Compile Include="src\ProverHelper.cs" />

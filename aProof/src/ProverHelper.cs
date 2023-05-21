@@ -25,7 +25,6 @@ namespace aProof
 		private string PrepareInput(HashSet<string> assumptions, HashSet<string> goals)
 		{
 			StringBuilder inputFormatted = new StringBuilder(4096);
-
 			inputFormatted.Append("formulas(assumptions).\n");
 			foreach (string assumption in assumptions)
 				inputFormatted.Append(assumption);
@@ -33,7 +32,6 @@ namespace aProof
 			foreach (string goal in goals)
 				inputFormatted.Append(goal);
 			inputFormatted.Append("\nend_of_list.");
-
 			return inputFormatted.ToString();
 		}
 
@@ -106,10 +104,14 @@ namespace aProof
 			return SearchForProof(assumptions, new HashSet<string>() { goal });
 		}
 
+		public string GetProofInfoOnly()
+		{
+			return outputProcessor.Proof.ToString();
+		}
+
 		public string GetPartialOutput()
 		{
 			StringBuilder output = new StringBuilder(4096);
-
 			output.Append("Input:\n");
 			output.Append(outputProcessor.Input);
 			output.Append("\n\nProof:\n");
@@ -119,14 +121,12 @@ namespace aProof
 					string.Format("\nFact proven. Number of proofs: {0}\n", outputProcessor.NumberOfProofs)
 				);
 			else output.Append("\nNo proof.\n");
-
 			return output.ToString();
 		}
 
 		public string GetFullOutput()
 		{
 			StringBuilder output = new StringBuilder(16384);
-
 			output.Append("Header:\n");
 			output.Append(outputProcessor.Header);
 			output.Append("\n\nInput:\n");
@@ -143,7 +143,6 @@ namespace aProof
 			output.Append(outputProcessor.Statistics);
 			output.Append("\n\nAdditional:\n");
 			output.Append(outputProcessor.Additional);
-
 			return output.ToString();
 		}
 

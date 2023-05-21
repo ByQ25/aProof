@@ -17,6 +17,7 @@ namespace aProof
 		private readonly HashSet<string> assumptionsSimple, assumptionsRelational, goalsSimple, goalsRelational;
 		private readonly DictHandler dictionary;
 		private readonly ProverHelper prover;
+		private readonly src.MessageFormatter msgFormatter;
 		private readonly HashSet<ProvenPacket> usedFacts, facts;	// Facts = proven goals, initially empty because facts must be proven
 		public uint Identity { get; }
 		public HashSet<ProvenPacket> Facts { get { return new HashSet<ProvenPacket>(facts); } }
@@ -36,6 +37,7 @@ namespace aProof
 			SplitAssumptionsOrGoals(goals, ExpressionType.Goals);
 			this.rng = new Random(rngSeed);
 			this.prover = new ProverHelper();
+			this.msgFormatter = new src.MessageFormatter(rngSeed);
 			this.usedFacts = new HashSet<ProvenPacket>();
 			this.facts = new HashSet<ProvenPacket>();
 		}
@@ -344,7 +346,7 @@ namespace aProof
 						isProofFound = prover.SearchForProof(currAssumptions, goal);
 						if (isDebugModeOn || isProofFound)
 						{
-							tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetPartialOutput());
+							tmpPacket = new ProvenPacket(dictionary.HashId, currAssumptions, goal, prover.GetProofInfoOnly());
 							if (isDebugModeOn)
 							{
 								LogCurrentStateAsDebug(tmpPacket);
@@ -379,12 +381,14 @@ namespace aProof
 		{
 			ProvenPacket chosenFact = new ProvenPacket();
 			HashSet<ProvenPacket> stillFreshFacts = GetFreshFacts();
-			bool areFactsSimilar = false;
 			int
 				tmpScore = -1,
 				currentBestScore = -1,
+				numberOfUsedFacts = this.usedFacts.Count,
 				numberOfFreshFacts = stillFreshFacts.Count;
-			if (previousFact != null && numberOfFreshFacts >  1 && rng.Next(4) < 3)
+			bool areFactsSimilar = false;
+			string message = "";
+			if (previousFact.HasValue && previousFact.Value.Goal != null && numberOfFreshFacts >  1 && rng.Next(4) < 3)
 			{
 				foreach (ProvenPacket fact in stillFreshFacts)
 				{
@@ -400,8 +404,9 @@ namespace aProof
 			}
 			else
 				chosenFact = stillFreshFacts.ElementAt(rng.Next(numberOfFreshFacts));
-			string message = "Temporary chat message.";
-			// TODO: string message = MessageFormatter.PrepareMessage(chosenFact.ProofInfo, areFactsSimilar);
+			message = usedFacts.Count == 0 ?
+				msgFormatter.PrepareMessage() :
+				msgFormatter.PrepareMessage(chosenFact, areFactsSimilar);
 			this.usedFacts.Add(chosenFact);
 			return new Tuple<ProvenPacket, string>(chosenFact, message);
 		}
