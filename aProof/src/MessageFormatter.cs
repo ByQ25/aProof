@@ -54,13 +54,12 @@ namespace aProof.src
 			StringBuilder output = new StringBuilder(1024);
 			switch (rng.Next(5))
 			{
-				// TODO: Come up with SMS about a goal
-				case 0: output.Append("1"); break;
-				case 1: output.Append("2"); break;
-				case 2: output.Append("3"); break;
-				case 3: output.Append("4"); break;
-				case 4: output.Append("5"); break;
-				default: output.Append("6"); break;
+				case 0: output.Append("The following expression is being true: "); break;
+				case 1: output.Append("I've found out about: "); break;
+				case 2: output.Append("From what I know, the truth is: "); break;
+				case 3: output.Append("This seems to be valid: "); break;
+				case 4: output.Append("What seems to be true is: "); break;
+				default: output.Append("Well... : "); break;
 			}
 			output.Append(TranslateExprIntoReadableText(inputGoal));
 			return output.ToString();
@@ -71,13 +70,12 @@ namespace aProof.src
 			StringBuilder output = new StringBuilder(4096);
 			switch (rng.Next(5))
 			{
-				// TODO: Come up with SMS about assumptions
-				case 0: output.AppendLine("1"); break;
-				case 1: output.AppendLine("2"); break;
-				case 2: output.AppendLine("3"); break;
-				case 3: output.AppendLine("4"); break;
-				case 4: output.AppendLine("5"); break;
-				default: output.AppendLine("6"); break;
+				case 0: output.AppendLine("Using following assumptions:"); break;
+				case 1: output.AppendLine("Assuming that:"); break;
+				case 2: output.AppendLine("If we'd assume:"); break;
+				case 3: output.AppendLine("My assumptions are:"); break;
+				case 4: output.AppendLine("With assumptions listed below:"); break;
+				default: output.AppendLine("Well... : "); break;
 			}
 			foreach (string assumption in inputAssumptions)
 				output.AppendLine(TranslateExprIntoReadableText(assumption));
@@ -89,13 +87,12 @@ namespace aProof.src
 			StringBuilder output = new StringBuilder(4096);
 			switch (rng.Next(5))
 			{
-				// TODO: Come up with SMS about proof
-				case 0: output.AppendLine("1"); break;
-				case 1: output.AppendLine("2"); break;
-				case 2: output.AppendLine("3"); break;
-				case 3: output.AppendLine("4"); break;
-				case 4: output.AppendLine("5"); break;
-				default: output.AppendLine("6"); break;
+				case 0: output.AppendLine("Here's a proof:"); break;
+				case 1: output.AppendLine("The proof is:"); break;
+				case 2: output.AppendLine("Proof:"); break;
+				case 3: output.AppendLine("That is how to prove it:"); break;
+				case 4: output.AppendLine("About the proof I definitely owe you..."); break;
+				default: output.AppendLine("Well... : "); break;
 			}
 			output.Append(TranslateProofIntoReadableText(proof));
 			return output.ToString();
@@ -127,6 +124,7 @@ namespace aProof.src
 			if (areFactsSimilar)
 				output.AppendLine(MentionFactsSimilarity());
 			output.AppendLine(MentionGoal(inputFact.Goal));
+			// TODO: Filter out unused assumptions if it is possible
 			output.AppendLine(MentionAssumptions(inputFact.Assumptions));
 			output.Append(MentionProof(inputFact.ProofInfo));
 			return output.ToString();
