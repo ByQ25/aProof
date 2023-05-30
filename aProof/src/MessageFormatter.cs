@@ -18,22 +18,6 @@ namespace aProof.src
 			this.rng = new Random(rngSeed);
 		}
 
-		private string TranslateExprIntoReadableText(string expr)
-		{
-			StringBuilder output = new StringBuilder(2048);
-			output.Append(expr);
-			// TODO: Implement TranslateExprIntoReadableText
-			return output.ToString();
-		}
-
-		private string TranslateProofIntoReadableText(string proof)
-		{
-			StringBuilder output = new StringBuilder(4096);
-			output.Append(proof);
-			// TODO: Implement TranslateProofIntoReadableText
-			return output.ToString();
-		}
-
 		private string MentionFactsSimilarity()
 		{
 			string output = "";
@@ -54,14 +38,14 @@ namespace aProof.src
 			StringBuilder output = new StringBuilder(1024);
 			switch (rng.Next(5))
 			{
-				case 0: output.Append("The following expression is being true: "); break;
-				case 1: output.Append("I've found out about: "); break;
-				case 2: output.Append("From what I know, the truth is: "); break;
-				case 3: output.Append("This seems to be valid: "); break;
-				case 4: output.Append("What seems to be true is: "); break;
-				default: output.Append("Well... : "); break;
+				case 0: output.AppendLine("The following expression is being true: "); break;
+				case 1: output.AppendLine("I've found out about: "); break;
+				case 2: output.AppendLine("From what I know, the truth is: "); break;
+				case 3: output.AppendLine("This seems to be valid: "); break;
+				case 4: output.AppendLine("What seems to be true is: "); break;
+				default: output.AppendLine("Well... : "); break;
 			}
-			output.Append(TranslateExprIntoReadableText(inputGoal));
+			output.AppendLine(inputGoal);
 			return output.ToString();
 		}
 
@@ -78,7 +62,7 @@ namespace aProof.src
 				default: output.AppendLine("Well... : "); break;
 			}
 			foreach (string assumption in inputAssumptions)
-				output.AppendLine(TranslateExprIntoReadableText(assumption));
+				output.AppendLine(assumption);
 			return output.ToString();
 		}
 
@@ -94,7 +78,7 @@ namespace aProof.src
 				case 4: output.AppendLine("About the proof I definitely owe you..."); break;
 				default: output.AppendLine("Well... : "); break;
 			}
-			output.Append(TranslateProofIntoReadableText(proof));
+			output.Append(proof);
 			return output.ToString();
 		}
 
@@ -124,7 +108,6 @@ namespace aProof.src
 			if (areFactsSimilar)
 				output.AppendLine(MentionFactsSimilarity());
 			output.AppendLine(MentionGoal(inputFact.Goal));
-			// TODO: Filter out unused assumptions if it is possible
 			output.AppendLine(MentionAssumptions(inputFact.Assumptions));
 			output.Append(MentionProof(inputFact.ProofInfo));
 			return output.ToString();
