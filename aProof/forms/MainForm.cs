@@ -185,7 +185,7 @@ namespace aProof
 			System.Diagnostics.Process.Start(defaultEditor, settingsPath);
 		}
 
-		private void helpLabel_Click(object sender, EventArgs e)
+		private void HelpLabel_Click(object sender, EventArgs e)
 		{
 			MessageBox.Show(
 				src.PropTranslator.TranslateProp("prop.settings.help.messagebox.text"),

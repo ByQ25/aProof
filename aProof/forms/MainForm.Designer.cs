@@ -78,7 +78,7 @@
 			this.helpLabel.Size = new System.Drawing.Size(19, 26);
 			this.helpLabel.TabIndex = 4;
 			this.helpLabel.Text = "?";
-			this.helpLabel.Click += new System.EventHandler(this.helpLabel_Click);
+			this.helpLabel.Click += new System.EventHandler(this.HelpLabel_Click);
 			this.helpLabel.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
 			this.helpLabel.MouseHover += new System.EventHandler(this.MouseHoverChangeColor);
 			// 
