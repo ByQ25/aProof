@@ -60,6 +60,7 @@
 			this.msgLabel.Size = new System.Drawing.Size(80, 32);
 			this.msgLabel.TabIndex = 0;
 			this.msgLabel.Text = "msgLabel";
+			this.msgLabel.UseMnemonic = false;
 			// 
 			// idLabel
 			// 
