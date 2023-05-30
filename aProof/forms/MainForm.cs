@@ -165,6 +165,16 @@ namespace aProof
 			System.Diagnostics.Process.Start(defaultEditor, settingsPath);
 		}
 
+		private void helpLabel_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show(
+				src.PropTranslator.TranslateProp("prop.settings.help.messagebox.text"),
+				src.PropTranslator.TranslateProp("prop.settings.help.messagebox.title"),
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Information
+			);
+		}
+
 		private void MinimizeLabel_Click(object sender, EventArgs e)
 		{
 			this.WindowState = FormWindowState.Minimized;

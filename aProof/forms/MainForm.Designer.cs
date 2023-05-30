@@ -43,6 +43,7 @@
 			this.ccButton = new System.Windows.Forms.Button();
 			this.mainGuiTimer = new System.Windows.Forms.Timer(this.components);
 			this.chatRendererTimer = new System.Windows.Forms.Timer(this.components);
+			this.helpLabel = new System.Windows.Forms.Label();
 			this.headerPanel.SuspendLayout();
 			this.contentPanel.SuspendLayout();
 			this.footerPanel.SuspendLayout();
@@ -52,6 +53,7 @@
 			// 
 			this.headerPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.headerPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.headerPanel.Controls.Add(this.helpLabel);
 			this.headerPanel.Controls.Add(this.tcButton);
 			this.headerPanel.Controls.Add(this.titleLabel);
 			this.headerPanel.Controls.Add(this.minimizeLabel);
@@ -226,6 +228,21 @@
 			// 
 			this.chatRendererTimer.Tick += new System.EventHandler(this.ChatRendererTimer_Tick);
 			// 
+			// helpLabel
+			// 
+			this.helpLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.helpLabel.AutoSize = true;
+			this.helpLabel.Font = new System.Drawing.Font("Candara", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.helpLabel.ForeColor = System.Drawing.Color.Snow;
+			this.helpLabel.Location = new System.Drawing.Point(412, 5);
+			this.helpLabel.Name = "helpLabel";
+			this.helpLabel.Size = new System.Drawing.Size(19, 26);
+			this.helpLabel.TabIndex = 4;
+			this.helpLabel.Text = "?";
+			this.helpLabel.Click += new System.EventHandler(this.helpLabel_Click);
+			this.helpLabel.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
+			this.helpLabel.MouseHover += new System.EventHandler(this.MouseHoverChangeColor);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -268,5 +285,6 @@
 		private System.Windows.Forms.Button tcButton;
 		private System.Windows.Forms.Timer chatRendererTimer;
 		private System.Windows.Forms.Label instructionLabel;
+		private System.Windows.Forms.Label helpLabel;
 	}
 }
