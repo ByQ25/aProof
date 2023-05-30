@@ -126,9 +126,15 @@ namespace aProof
 						sw.WriteLine(string.Format("Agent {0}:\n{1}\n", msg.Item1, msg.Item2));
 		}
 
-		private void CcButton_Click(object sender, EventArgs e)
+		private void PrepareContentPanel()
 		{
 			contentPanel.Controls.Clear();
+			contentPanel.Controls.Add(instructionLabel);
+		}
+
+		private void CcButton_Click(object sender, EventArgs e)
+		{
+			PrepareContentPanel();
 			availableChatBubbleColors = availableChatBubbleColors.OrderBy(i => rng.Next()).ToArray();
 			StartWorkingThread(
 				env.CarryConversation,
@@ -139,7 +145,7 @@ namespace aProof
 
 		private void LatiaButton_Click(object sender, EventArgs e)
 		{
-			contentPanel.Controls.Clear();
+			PrepareContentPanel();
 			StartWorkingThread(
 				env.LetAgentsThinkInAdvance,
 				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS
