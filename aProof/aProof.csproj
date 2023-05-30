@@ -71,6 +71,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="src\Agent.cs" />
+    <Compile Include="src\CustomErrorHandler.cs" />
     <Compile Include="src\DictHandler.cs" />
     <Compile Include="src\Environment.cs" />
     <Compile Include="src\IProverOutputProcessor.cs" />

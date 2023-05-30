@@ -12,7 +12,6 @@ namespace aProof
 		private enum ExpressionType { Assumptions, Goals }
 		private enum ExpressionComplexity { Simple, Relational, GeneralQuantifiers }
 		private readonly bool isDebugModeOn;
-		private readonly string debugLogFilePath;
 		private readonly Random rng;
 		private readonly HashSet<string> assumptionsSimple, assumptionsRelational, goalsSimple, goalsRelational;
 		private readonly DictHandler dictionary;
@@ -27,7 +26,6 @@ namespace aProof
 		{
 			this.Identity = id;
 			this.isDebugModeOn = SimulationSettings.Default.IS_IN_DEBUG_MODE;
-			this.debugLogFilePath = SimulationSettings.Default.DEBUG_FILE_PATH;
 			this.dictionary = dictionary;
 			this.assumptionsSimple = new HashSet<string>();
 			this.assumptionsRelational = new HashSet<string>();
@@ -413,14 +411,7 @@ namespace aProof
 
 		private void LogCurrentStateAsDebug(ProvenPacket pp)
 		{
-			try
-			{
-				if (!File.Exists(this.debugLogFilePath))
-					File.Create(this.debugLogFilePath);
-				using (StreamWriter sw = new StreamWriter(this.debugLogFilePath, true))
-					sw.Write(pp.ToString());
-			}
-			catch { return; }
+			src.CustomErrorHandler.Log(pp.ToString(), src.CustomErrorHandler.LogLevel.DEBUG);
 		}
 
 		public class AgentException : ApplicationException

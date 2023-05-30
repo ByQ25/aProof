@@ -27,7 +27,21 @@ namespace aProof
 			this.isDragging = false;
 			this.rng = new Random();
 			this.titleLabel.Text = typeof(AProofMain).Namespace;
-			this.env = new Environment((int)SimulationSettings.Default.NUMBER_OF_AGENTS);
+			try { this.env = new Environment((int)SimulationSettings.Default.NUMBER_OF_AGENTS); }
+			catch (ApplicationException appExc)
+			{
+				if (
+					appExc is DictHandler.DictHandlerException
+					|| appExc is ProverHelper.ProverHelperException
+				)
+				{
+					src.CustomErrorHandler.Log(appExc.Message, src.CustomErrorHandler.LogLevel.ERROR);
+					src.CustomErrorHandler.DisplayError(appExc.Message);
+				}
+				else
+					throw;
+				System.Environment.Exit(-665);
+			}
 			this.ReadyMsgs = this.env.ReadyMsgs;
 			this.availableChatBubbleColors = new Color[] {
 				Color.HotPink, Color.OrangeRed, Color.Lime, Color.Khaki,

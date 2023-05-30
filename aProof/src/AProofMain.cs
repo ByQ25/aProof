@@ -10,10 +10,5 @@ namespace aProof
 		{
 			Application.Run(new MainForm());
 		}
-
-		public class AProofException : ApplicationException
-		{
-			public AProofException(string errMsg) : base(errMsg) { }
-		}
 	}
 }
