@@ -64,7 +64,7 @@
 			// idLabel
 			// 
 			this.idLabel.BackColor = System.Drawing.Color.Transparent;
-			this.idLabel.Font = new System.Drawing.Font("Forte", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.idLabel.Font = new System.Drawing.Font("Monotype Corsiva", 21.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.idLabel.ForeColor = System.Drawing.Color.Snow;
 			this.idLabel.Location = new System.Drawing.Point(5, 9);
 			this.idLabel.Name = "idLabel";
