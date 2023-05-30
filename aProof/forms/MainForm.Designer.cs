@@ -30,6 +30,7 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this.headerPanel = new System.Windows.Forms.Panel();
+			this.helpLabel = new System.Windows.Forms.Label();
 			this.tcButton = new System.Windows.Forms.Button();
 			this.titleLabel = new System.Windows.Forms.Label();
 			this.minimizeLabel = new System.Windows.Forms.Label();
@@ -43,7 +44,6 @@
 			this.ccButton = new System.Windows.Forms.Button();
 			this.mainGuiTimer = new System.Windows.Forms.Timer(this.components);
 			this.chatRendererTimer = new System.Windows.Forms.Timer(this.components);
-			this.helpLabel = new System.Windows.Forms.Label();
 			this.headerPanel.SuspendLayout();
 			this.contentPanel.SuspendLayout();
 			this.footerPanel.SuspendLayout();
@@ -66,6 +66,21 @@
 			this.headerPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.HeaderPanel_MouseDown);
 			this.headerPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.HeaderPanel_MouseMove);
 			this.headerPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.HeaderPanel_MouseUp);
+			// 
+			// helpLabel
+			// 
+			this.helpLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.helpLabel.AutoSize = true;
+			this.helpLabel.Font = new System.Drawing.Font("Candara", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.helpLabel.ForeColor = System.Drawing.Color.Snow;
+			this.helpLabel.Location = new System.Drawing.Point(412, 5);
+			this.helpLabel.Name = "helpLabel";
+			this.helpLabel.Size = new System.Drawing.Size(19, 26);
+			this.helpLabel.TabIndex = 4;
+			this.helpLabel.Text = "?";
+			this.helpLabel.Click += new System.EventHandler(this.helpLabel_Click);
+			this.helpLabel.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
+			this.helpLabel.MouseHover += new System.EventHandler(this.MouseHoverChangeColor);
 			// 
 			// tcButton
 			// 
@@ -227,21 +242,6 @@
 			// chatRendererTimer
 			// 
 			this.chatRendererTimer.Tick += new System.EventHandler(this.ChatRendererTimer_Tick);
-			// 
-			// helpLabel
-			// 
-			this.helpLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.helpLabel.AutoSize = true;
-			this.helpLabel.Font = new System.Drawing.Font("Candara", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-			this.helpLabel.ForeColor = System.Drawing.Color.Snow;
-			this.helpLabel.Location = new System.Drawing.Point(412, 5);
-			this.helpLabel.Name = "helpLabel";
-			this.helpLabel.Size = new System.Drawing.Size(19, 26);
-			this.helpLabel.TabIndex = 4;
-			this.helpLabel.Text = "?";
-			this.helpLabel.Click += new System.EventHandler(this.helpLabel_Click);
-			this.helpLabel.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
-			this.helpLabel.MouseHover += new System.EventHandler(this.MouseHoverChangeColor);
 			// 
 			// MainForm
 			// 
