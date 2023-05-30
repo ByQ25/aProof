@@ -31,6 +31,9 @@ namespace aProof
 			string[][] dictionary = new string[4][];
 
 			if (File.Exists(path))
+			{
+				try { using (Stream stream = new FileStream(path, FileMode.Open)) { } }
+				catch (IOException exc) { throw new DictHandlerException(exc.Message); }
 				using (StreamReader sr = new StreamReader(path))
 				{
 					string input = sr.ReadToEnd();
@@ -46,6 +49,7 @@ namespace aProof
 					}
 					else throw new DictHandlerException("Dictionary file is formatted incorrectly. The dictionary require at least 4 data rows.");
 				}
+			}
 			else throw new DictHandlerException("No dictionary file.");
 		}
 
