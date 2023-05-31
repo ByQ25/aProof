@@ -152,7 +152,7 @@ namespace aProof
 			availableChatBubbleColors = availableChatBubbleColors.OrderBy(i => rng.Next()).ToArray();
 			StartWorkingThread(
 				env.CarryConversation,
-				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS,
+				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS + 1,
 				true
 			);
 		}
@@ -279,8 +279,10 @@ namespace aProof
 		private void ChatRendererTimer_Tick(object sender, EventArgs e)
 		{
 			int
-				i = contentPanel.Controls.Count,
-				msgsCount = 0;
+				msgsCount = 0,
+				i = contentPanel.Controls.Count;
+			if (contentPanel.Controls.ContainsKey("instructionLabel"))
+				--i;
 			lock (ReadyMsgs)
 			{
 				msgsCount = ReadyMsgs.Count;
