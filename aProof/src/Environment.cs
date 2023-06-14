@@ -139,11 +139,12 @@ namespace aProof
 
 		public void CarryConversation(uint iterations, uint thinkingReps, bool shouldFormatOutputAsMessage)
 		{
-			Agent[] agentsWithFreshFacts = GetAgentsWithFreshFacts();
+			Agent[] agentsWithFreshFacts;
 			Tuple<ProvenPacket, string> factWithMessage = null;
 			this.ReadyMsgs.Clear();
 			for (int i = 0; i < iterations;)
 			{
+				agentsWithFreshFacts = GetAgentsWithFreshFacts();
 				while (agentsWithFreshFacts.Length < 1)
 				{
 					LetAgentsThinkInAdvance(thinkingReps);
