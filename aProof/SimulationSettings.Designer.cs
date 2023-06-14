@@ -124,7 +124,7 @@ namespace aProof {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("..\\..\\dictionary.csv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("..\\..\\dictionary_1.csv")]
         public string DICTIONARY_FILE_PATH {
             get {
                 return ((string)(this["DICTIONARY_FILE_PATH"]));
