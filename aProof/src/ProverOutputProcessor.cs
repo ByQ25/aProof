@@ -72,6 +72,7 @@ namespace aProof
 					switch (line[0])
 					{
 						case '%': continue;
+						case '\r': continue;
 						case '=':
 							if (line.Contains(availableSectionsDict[ProofSection.Header])) currentSection = this.Header;
 							else if (line.Contains(availableSectionsDict[ProofSection.Input])) currentSection = this.Input;
