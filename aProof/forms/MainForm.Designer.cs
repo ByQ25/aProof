@@ -39,6 +39,7 @@
 			this.instructionLabel = new System.Windows.Forms.Label();
 			this.footerPanel = new System.Windows.Forms.Panel();
 			this.settingsButton = new System.Windows.Forms.Button();
+			this.inputButton = new System.Windows.Forms.Button();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.latiaButton = new System.Windows.Forms.Button();
 			this.ccButton = new System.Windows.Forms.Button();
@@ -168,13 +169,14 @@
 			// 
 			this.footerPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.footerPanel.Controls.Add(this.settingsButton);
+			this.footerPanel.Controls.Add(this.inputButton);
 			this.footerPanel.Controls.Add(this.progressBar1);
 			this.footerPanel.Controls.Add(this.latiaButton);
 			this.footerPanel.Controls.Add(this.ccButton);
 			this.footerPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.footerPanel.Location = new System.Drawing.Point(0, 670);
 			this.footerPanel.Name = "footerPanel";
-			this.footerPanel.Size = new System.Drawing.Size(500, 130);
+			this.footerPanel.Size = new System.Drawing.Size(500, 160);
 			this.footerPanel.TabIndex = 2;
 			// 
 			// settingsButton
@@ -182,22 +184,37 @@
 			this.settingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
 			this.settingsButton.BackColor = System.Drawing.Color.Snow;
 			this.settingsButton.Font = new System.Drawing.Font("Rubik", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-			this.settingsButton.Location = new System.Drawing.Point(4, 75);
+			this.settingsButton.Location = new System.Drawing.Point(4, 108);
 			this.settingsButton.Name = "settingsButton";
 			this.settingsButton.Size = new System.Drawing.Size(492, 27);
-			this.settingsButton.TabIndex = 3;
+			this.settingsButton.TabIndex = 4;
 			this.settingsButton.Text = "prop.button.settings";
 			this.settingsButton.UseVisualStyleBackColor = false;
 			this.settingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
 			this.settingsButton.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
 			this.settingsButton.MouseHover += new System.EventHandler(this.MouseHoverChangeColor);
 			// 
+			// inputButton
+			// 
+			this.inputButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+			this.inputButton.BackColor = System.Drawing.Color.Snow;
+			this.inputButton.Font = new System.Drawing.Font("Rubik", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.inputButton.Location = new System.Drawing.Point(4, 75);
+			this.inputButton.Name = "inputButton";
+			this.inputButton.Size = new System.Drawing.Size(492, 27);
+			this.inputButton.TabIndex = 3;
+			this.inputButton.Text = "prop.button.input";
+			this.inputButton.UseVisualStyleBackColor = false;
+			this.inputButton.Click += new System.EventHandler(this.InputButton_Click);
+			this.inputButton.MouseLeave += new System.EventHandler(this.MouseLeaveChangeColor);
+			this.inputButton.MouseHover += new System.EventHandler(this.MouseHoverChangeColor);
+			// 
 			// progressBar1
 			// 
 			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.progressBar1.ForeColor = System.Drawing.Color.DarkOrange;
-			this.progressBar1.Location = new System.Drawing.Point(4, 113);
+			this.progressBar1.Location = new System.Drawing.Point(4, 143);
 			this.progressBar1.Name = "progressBar1";
 			this.progressBar1.Size = new System.Drawing.Size(490, 12);
 			this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -247,7 +264,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(500, 800);
+			this.ClientSize = new System.Drawing.Size(500, 830);
 			this.ControlBox = false;
 			this.Controls.Add(this.footerPanel);
 			this.Controls.Add(this.contentPanel);
@@ -280,6 +297,7 @@
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Button latiaButton;
 		private System.Windows.Forms.Label titleLabel;
+		private System.Windows.Forms.Button inputButton;
 		private System.Windows.Forms.Button settingsButton;
 		private System.Windows.Forms.Timer mainGuiTimer;
 		private System.Windows.Forms.Button tcButton;

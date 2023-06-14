@@ -10,13 +10,16 @@ namespace aProof
 {
 	public partial class MainForm : Form
 	{
-		private bool isDragging;
+		private bool
+			isDragging,
+			isInputModeOn;
 		private Point startingPoint;
 		private Task currentTask;
 		private Random rng;
 		private readonly Environment env;
 		private readonly List<Tuple<uint, string>> ReadyMsgs;
 		private Color[] availableChatBubbleColors;
+		private RichTextBox inputRTB;
 
 		public MainForm()
 		{
@@ -25,6 +28,7 @@ namespace aProof
 			this.tcButton.Visible = false;
 			this.Icon = Properties.Resources.aProof_Icon;
 			this.isDragging = false;
+			this.isInputModeOn = false;
 			this.rng = new Random();
 			this.titleLabel.Text = typeof(AProofMain).Namespace;
 			try { this.env = new Environment((int)SimulationSettings.Default.NUMBER_OF_AGENTS); }
@@ -49,6 +53,21 @@ namespace aProof
 				Color.Azure, Color.Chartreuse, Color.Gold, Color.MediumSeaGreen,
 				Color.DarkOrange, Color.DeepSkyBlue, Color.GreenYellow, Color.Orchid
 			};
+			this.inputRTB = new RichTextBox
+			{
+				Name = "inputRichTextBox",
+				Anchor = (
+					AnchorStyles.Bottom
+					| AnchorStyles.Right
+					| AnchorStyles.Left
+					| AnchorStyles.Top
+				),
+				Dock = DockStyle.Fill,
+				Font = new Font("Arial", 9.75f, FontStyle.Regular),
+				SelectionColor = Color.DarkGray
+			};
+			this.inputRTB.Click += new EventHandler(InputRTB_Click);
+			this.inputRTB.ParentChanged += new EventHandler(InputRTB_ParentChanged);
 		}
 
 		private void LoadTranslations()
@@ -56,6 +75,7 @@ namespace aProof
 			this.tcButton.Text = src.PropTranslator.TranslateProp("prop.button.test_chat");
 			this.ccButton.Text = src.PropTranslator.TranslateProp("prop.button.carry_conversation");
 			this.latiaButton.Text = src.PropTranslator.TranslateProp("prop.button.let_agents_think");
+			this.inputButton.Text = src.PropTranslator.TranslateProp("prop.button.input");
 			this.settingsButton.Text = src.PropTranslator.TranslateProp("prop.button.settings");
 			this.instructionLabel.Text = src.PropTranslator.TranslateProp("prop.label.saving_conversation_instruction");
 		}
@@ -83,6 +103,7 @@ namespace aProof
 			this.tcButton.Enabled = false;
 			this.ccButton.Enabled = false;
 			this.latiaButton.Enabled = false;
+			this.inputButton.Enabled = false;
 			this.settingsButton.Enabled = false;
 			this.progressBar1.Visible = true;
 			this.progressBar1.Value = 0;
@@ -93,6 +114,7 @@ namespace aProof
 			this.tcButton.Enabled = true;
 			this.ccButton.Enabled = true;
 			this.latiaButton.Enabled = true;
+			this.inputButton.Enabled = true;
 			this.settingsButton.Enabled = true;
 			this.progressBar1.Visible = false;
 		}
@@ -164,6 +186,30 @@ namespace aProof
 				env.LetAgentsThinkInAdvance,
 				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS
 			);
+		}
+
+		private void InputButton_Click(object sender, EventArgs e)
+		{
+			if(isInputModeOn)
+			{
+				// TODO: Save input
+				this.contentPanel.Controls.Remove(inputRTB);
+				this.instructionLabel.Visible = true;
+				TurnOffWorkInProgressMode();
+				this.inputButton.Text = src.PropTranslator.TranslateProp("prop.button.input");
+			}
+			else
+			{
+				PrepareContentPanel();
+				this.instructionLabel.Visible = false;
+				this.contentPanel.Controls.Add(inputRTB);
+				TurnOnWorkInProgressMode();
+				this.progressBar1.Visible = false;
+				this.inputButton.Text = src.PropTranslator.TranslateProp("prop.button.input.save");
+				this.inputButton.Enabled = true;
+				this.ActiveControl = inputButton;
+			}
+			this.isInputModeOn = !this.isInputModeOn;
 		}
 
 		private void SettingsButton_Click(object sender, EventArgs e)
@@ -255,6 +301,27 @@ namespace aProof
 				message,
 				ChooseChatBubbleColor(uint.Parse(author.Substring(1, author.Length - 1)))
 			);
+		}
+
+		private void InputRTB_Click(object sender, EventArgs e)
+		{
+			if (sender is RichTextBox)
+			{
+				RichTextBox rtbTmp = (sender as RichTextBox);
+				if (rtbTmp.Text == src.PropTranslator.TranslateProp("prop.input.textbox.message"))
+					rtbTmp.Clear();
+			}
+		}
+
+		private void InputRTB_ParentChanged(object sender, EventArgs e)
+		{
+			if (sender is RichTextBox)
+			{
+				RichTextBox rtbTmp = (sender as RichTextBox);
+				rtbTmp.Clear();
+				rtbTmp.SelectionColor = Color.DarkGray;
+				rtbTmp.AppendText(src.PropTranslator.TranslateProp("prop.input.textbox.message"));
+			}
 		}
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
