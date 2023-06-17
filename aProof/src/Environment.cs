@@ -106,9 +106,9 @@ namespace aProof
 			return output.ToArray();
 		}
 
-		private void DistributeNewFact(ProvenPacket fact, int sourceAgentId)
+		private void DistributeNewFact(ProvenPacket fact, uint sourceAgentId)
 		{
-			for (int a = 0; a < agents.Length; ++a)
+			for (uint a = 0; a < agents.Length; ++a)
 			{
 				if (a == sourceAgentId)
 					continue;
@@ -164,7 +164,7 @@ namespace aProof
 							)
 						);
 					}
-					DistributeNewFact(factWithMessage.Item1, 1);
+					DistributeNewFact(factWithMessage.Item1, agentsWithFreshFacts[a].Identity - 1);
 				}
 				this.Progress = (int)(++i * 100.0 / iterations);
 			}
