@@ -12,7 +12,8 @@ namespace aProof
 	{
 		private bool
 			isDragging,
-			isInputModeOn;
+			isInputModeOn,
+			hasShownSettingsInfo;
 		private Point startingPoint;
 		private Task currentTask;
 		private Random rng;
@@ -29,6 +30,7 @@ namespace aProof
 			this.Icon = Properties.Resources.aProof_Icon;
 			this.isDragging = false;
 			this.isInputModeOn = false;
+			this.hasShownSettingsInfo = false;
 			this.rng = new Random();
 			this.titleLabel.Text = typeof(AProofMain).Namespace;
 			try { this.env = new Environment((int)SimulationSettings.Default.NUMBER_OF_AGENTS); }
@@ -214,12 +216,16 @@ namespace aProof
 
 		private void SettingsButton_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show(
-				src.PropTranslator.TranslateProp("prop.settings.messagebox.text"),
-				src.PropTranslator.TranslateProp("prop.settings.messagebox.title"),
-				MessageBoxButtons.OK,
-				MessageBoxIcon.Information
-			);
+			if (!hasShownSettingsInfo)
+			{
+				MessageBox.Show(
+					src.PropTranslator.TranslateProp("prop.settings.messagebox.text"),
+					src.PropTranslator.TranslateProp("prop.settings.messagebox.title"),
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information
+				);
+				this.hasShownSettingsInfo = true;
+			}
 			string
 				settingsPath = System.IO.Path.GetFullPath(string.Format("{0}.exe.config", typeof(AProofMain).Namespace)),
 				defaultEditor = (string)Microsoft.Win32.Registry.GetValue(
