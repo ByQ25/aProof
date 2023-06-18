@@ -1,6 +1,6 @@
 prop.button.test_chat=Testuj chat
 prop.button.carry_conversation=Przeprowadź rozmowę
-prop.button.let_agents_think=Daj pomyśleć agentom zawczasu
+prop.button.let_agents_think=Daj agentom pomyśleć zawczasu
 prop.button.input=Zaproponuj założenia i cele
 prop.button.input.save=Zapisz pakiet założeń i celów
 prop.button.settings=Ustawienia
