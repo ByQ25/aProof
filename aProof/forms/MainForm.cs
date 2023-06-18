@@ -13,7 +13,7 @@ namespace aProof
 	{
 		private bool
 			isDragging,
-			isInputModeOn,
+			isWorkingModeOn,
 			hasShownSettingsInfo;
 		private Point startingPoint;
 		private Task currentTask;
@@ -31,7 +31,7 @@ namespace aProof
 			this.tcButton.Visible = false;
 			this.Icon = Properties.Resources.aProof_Icon;
 			this.isDragging = false;
-			this.isInputModeOn = false;
+			this.isWorkingModeOn = false;
 			this.hasShownSettingsInfo = false;
 			this.rng = new Random();
 			this.titleLabel.Text = typeof(AProofMain).Namespace;
@@ -110,6 +110,7 @@ namespace aProof
 
 		private void TurnOnWorkInProgressMode()
 		{
+			this.isWorkingModeOn = true;
 			this.tcButton.Enabled = false;
 			this.ccButton.Enabled = false;
 			this.latiaButton.Enabled = false;
@@ -122,12 +123,17 @@ namespace aProof
 
 		private void TurnOffWorkInProgressMode()
 		{
+			this.isWorkingModeOn = false;
 			this.tcButton.Enabled = true;
 			this.ccButton.Enabled = true;
 			this.latiaButton.Enabled = true;
 			this.inputButton.Enabled = true;
 			this.settingsButton.Enabled = true;
 			this.progressBar1.Visible = false;
+			this.ccButton.Text = src.PropTranslator.TranslateProp("prop.button.carry_conversation");
+			this.latiaButton.Text = src.PropTranslator.TranslateProp("prop.button.let_agents_think");
+			this.inputButton.Text = src.PropTranslator.TranslateProp("prop.button.input");
+			this.Cursor = Cursors.Default;
 		}
 
 		private void ChangeColor(object controlObj, Color color)
@@ -181,34 +187,59 @@ namespace aProof
 
 		private void CcButton_Click(object sender, EventArgs e)
 		{
-			PrepareContentPanel();
-			availableChatBubbleColors = availableChatBubbleColors.OrderBy(i => rng.Next()).ToArray();
-			StartWorkingThread(
-				env.CarryConversation,
-				// + 1 because the first few messeges are just the welcoming
-				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS + 1,
-				true
-			);
+			if (isWorkingModeOn)
+			{
+				if (cancTokenSrc != null)
+					this.cancTokenSrc.Cancel();
+				this.ccButton.Enabled = false;
+				try { this.Cursor = Cursors.WaitCursor; }
+				catch { this.Cursor = Cursors.Default; }
+			}
+			else
+			{
+				PrepareContentPanel();
+				availableChatBubbleColors = availableChatBubbleColors.OrderBy(i => rng.Next()).ToArray();
+				StartWorkingThread(
+					env.CarryConversation,
+					// + 1 because the first few messeges are just the welcoming
+					SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS + 1,
+					true
+				);
+				this.ccButton.Text = src.PropTranslator.TranslateProp("prop.button.carry_conversation.cancel");
+				this.ccButton.Enabled = true;
+			}
 		}
 
 		private void LatiaButton_Click(object sender, EventArgs e)
 		{
-			PrepareContentPanel();
-			StartWorkingThread(
-				env.LetAgentsThinkInAdvance,
-				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS
-			);
+			if (isWorkingModeOn)
+			{
+				if (cancTokenSrc != null)
+					this.cancTokenSrc.Cancel();
+				this.latiaButton.Enabled = false;
+				try { this.Cursor = Cursors.WaitCursor; }
+				catch { this.Cursor = Cursors.Default; }
+			}
+			else
+			{
+				PrepareContentPanel();
+				StartWorkingThread(
+					env.LetAgentsThinkInAdvance,
+					SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS
+				);
+				this.latiaButton.Text = src.PropTranslator.TranslateProp("prop.button.let_agents_think.cancel");
+				this.latiaButton.Enabled = true;
+			}
 		}
 
 		private void InputButton_Click(object sender, EventArgs e)
 		{
-			if(isInputModeOn)
+			if(isWorkingModeOn)
 			{
 				// TODO: Save input
 				this.contentPanel.Controls.Remove(inputRTB);
 				this.instructionLabel.Visible = true;
 				TurnOffWorkInProgressMode();
-				this.inputButton.Text = src.PropTranslator.TranslateProp("prop.button.input");
 			}
 			else
 			{
@@ -221,7 +252,6 @@ namespace aProof
 				this.inputButton.Enabled = true;
 				this.ActiveControl = inputButton;
 			}
-			this.isInputModeOn = !this.isInputModeOn;
 		}
 
 		private void SettingsButton_Click(object sender, EventArgs e)
