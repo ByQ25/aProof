@@ -117,6 +117,7 @@ namespace aProof
 			this.settingsButton.Enabled = false;
 			this.progressBar1.Visible = true;
 			this.progressBar1.Value = 0;
+			this.progressBar1.Update();
 		}
 
 		private void TurnOffWorkInProgressMode()
