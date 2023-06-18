@@ -117,11 +117,15 @@ namespace aProof
 			}
 		}
 
-		public void LetAgentsThinkInAdvance(uint iterations)
+		public void LetAgentsThinkInAdvance(uint iterations, CancellationToken? cancToken)
 		{
 			Thread[] threads = new Thread[this.agents.Length];
 			for (uint i = 0; i < iterations;)
 			{
+				if (
+					cancToken.HasValue
+					&& cancToken.Value.IsCancellationRequested
+				) break;
 				for (int j = 0; j < threads.Length; ++j)
 				{
 					threads[j] = new Thread(new ThreadStart(agents[j].VerifyAllGoals));
@@ -137,17 +141,29 @@ namespace aProof
 			SaveProofsToJson(this.knownFactsFilePath, this.knownFacts);
 		}
 
-		public void CarryConversation(uint iterations, uint thinkingReps, bool shouldFormatOutputAsMessage)
+		public void CarryConversation(
+			uint iterations,
+			uint thinkingReps,
+			bool shouldFormatOutputAsMessage,
+			CancellationToken? cancToken
+		)
 		{
 			Agent[] agentsWithFreshFacts;
 			Tuple<ProvenPacket, string> factWithMessage = null;
 			this.ReadyMsgs.Clear();
 			for (int i = 0; i < iterations;)
 			{
+				if (
+					cancToken.HasValue
+					&& cancToken.Value.IsCancellationRequested
+				) break;
 				agentsWithFreshFacts = GetAgentsWithFreshFacts();
-				while (agentsWithFreshFacts.Length < 1)
+				while (
+					agentsWithFreshFacts.Length < 1
+					&& (!cancToken.HasValue || !cancToken.Value.IsCancellationRequested)
+				)
 				{
-					LetAgentsThinkInAdvance(thinkingReps);
+					LetAgentsThinkInAdvance(thinkingReps, cancToken);
 					agentsWithFreshFacts = GetAgentsWithFreshFacts();
 				}
 				for (int a = 0; a < agentsWithFreshFacts.Length; ++a)
@@ -170,26 +186,33 @@ namespace aProof
 			}
 		}
 
-		public void CarryConversation(uint iterations, uint thinkingReps)
+		public void CarryConversation(uint iterations, uint thinkingReps, CancellationToken? cancToken)
 		{
-			CarryConversation(iterations, thinkingReps, true);
+			CarryConversation(iterations, thinkingReps, true, cancToken);
 		}
 
-		public void CarryConversation(uint iterations, bool shouldFormatOutputAsMessage)
+		public void CarryConversation(uint iterations, bool shouldFormatOutputAsMessage, CancellationToken? cancToken)
 		{
 			CarryConversation(
 				iterations,
 				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS,
-				shouldFormatOutputAsMessage
+				shouldFormatOutputAsMessage,
+				cancToken
+			);
+		}
+
+		public void CarryConversation(uint iterations, CancellationToken? cancToken)
+		{
+			CarryConversation(
+				iterations,
+				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS,
+				cancToken
 			);
 		}
 
 		public void CarryConversation(uint iterations)
 		{
-			CarryConversation(
-				iterations,
-				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS
-			);
+			CarryConversation(iterations, null);
 		}
 	}
 }

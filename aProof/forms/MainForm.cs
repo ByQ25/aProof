@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace aProof
 		private Task currentTask;
 		private Random rng;
 		private readonly Environment env;
+		private CancellationTokenSource cancTokenSrc;
 		private readonly List<Tuple<uint, string>> ReadyMsgs;
 		private Color[] availableChatBubbleColors;
 		private RichTextBox inputRTB;
@@ -82,11 +84,17 @@ namespace aProof
 			this.instructionLabel.Text = src.PropTranslator.TranslateProp("prop.label.saving_conversation_instruction");
 		}
 
-		private void StartWorkingThread(Action<uint> action, uint input, bool shouldRenderMsgs)
+		private void StartWorkingThread(Action<uint, CancellationToken?> action, uint input, bool shouldRenderMsgs)
 		{
+			CancellationToken cancToken;
+			if (cancTokenSrc != null)
+				cancTokenSrc.Dispose();
+			this.cancTokenSrc = new CancellationTokenSource();
+			cancToken = this.cancTokenSrc.Token;
 			TurnOnWorkInProgressMode();
 			this.currentTask = new Task(
-				() => action(input),
+				() => action(input, cancToken),
+				cancToken,
 				TaskCreationOptions.LongRunning
 			);
 			this.currentTask.Start();
@@ -95,7 +103,7 @@ namespace aProof
 				this.chatRendererTimer.Start();
 		}
 
-		private void StartWorkingThread(Action<uint> action, uint input)
+		private void StartWorkingThread(Action<uint, CancellationToken?> action, uint input)
 		{
 			StartWorkingThread(action, input, false);
 		}
@@ -176,6 +184,7 @@ namespace aProof
 			availableChatBubbleColors = availableChatBubbleColors.OrderBy(i => rng.Next()).ToArray();
 			StartWorkingThread(
 				env.CarryConversation,
+				// + 1 because the first few messeges are just the welcoming
 				SimulationSettings.Default.DEFAULT_THINKING_ITERATIONS + 1,
 				true
 			);
@@ -254,7 +263,17 @@ namespace aProof
 
 		private void ExitLabel_Click(object sender, EventArgs e)
 		{
-			this.Close();
+			if (cancTokenSrc != null)
+				this.cancTokenSrc.Cancel();
+			if (currentTask == null || currentTask.IsCompleted || currentTask.IsCanceled)
+				this.Close();
+			else
+				MessageBox.Show(
+				src.PropTranslator.TranslateProp("prop.exit.warn.messagebox.text"),
+				src.PropTranslator.TranslateProp("prop.exit.warn.messagebox.title"),
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Warning
+			);
 		}
 
 		private void MouseHoverChangeColor(object sender, EventArgs e)
@@ -334,7 +353,11 @@ namespace aProof
 		{
 			if (e.Control && e.Shift && e.KeyCode == Keys.T)
 				tcButton.Visible = !tcButton.Visible;
-			if (currentTask != null && currentTask.IsCompleted && e.Control && e.KeyCode == Keys.S)
+			if (
+				currentTask != null
+				&& (currentTask.IsCompleted || currentTask.IsCanceled)
+				&& e.Control
+				&& e.KeyCode == Keys.S)
 				SaveConversationToFile();
 		}
 
@@ -342,7 +365,7 @@ namespace aProof
 		{
 			progressBar1.Value = env.Progress;
 			progressBar1.Update();
-			if (currentTask != null && currentTask.IsCompleted)
+			if (currentTask != null && (currentTask.IsCompleted || currentTask.IsCanceled))
 			{
 				TurnOffWorkInProgressMode();
 				this.mainGuiTimer.Stop();
@@ -372,7 +395,7 @@ namespace aProof
 			}
 			if (
 				currentTask != null 
-				&& currentTask.IsCompleted
+				&& (currentTask.IsCompleted || currentTask.IsCanceled)
 				&& i == msgsCount
 			) this.chatRendererTimer.Stop();
 		}
