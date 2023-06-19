@@ -114,10 +114,11 @@ namespace aProof
 					|| dictionary[1].Contains(match.Value)
 					|| dictionary[2].Contains(match.Value)
 					|| additional.Contains(match.Value)
-				) return true;
+				) continue;
+				return false;
 			}
 
-			return false;
+			return true;
 		}
 
 		public bool ValidateInputAgainstDictionary(HashSet<string> input)
