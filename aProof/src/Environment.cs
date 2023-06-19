@@ -171,30 +171,48 @@ namespace aProof
 					cancToken.HasValue
 					&& cancToken.Value.IsCancellationRequested
 				) break;
-				agentsWithFreshFacts = GetAgentsWithFreshFacts();
-				while (
-					agentsWithFreshFacts.Length < 1
-					&& (!cancToken.HasValue || !cancToken.Value.IsCancellationRequested)
-				)
+				if (i == 0)
 				{
-					LetAgentsThinkInAdvance(thinkingReps, cancToken);
-					agentsWithFreshFacts = GetAgentsWithFreshFacts();
-				}
-				for (int a = 0; a < agentsWithFreshFacts.Length; ++a)
-				{
-					factWithMessage = factWithMessage == null ?
-						agentsWithFreshFacts[a].ChooseFactAndSpeak(null)
-						: agentsWithFreshFacts[a].ChooseFactAndSpeak(factWithMessage.Item1);
-					lock (ReadyMsgs)
+					for (int a = 0; a < agents.Length; ++a)
 					{
-						ReadyMsgs.Add(
-							new Tuple<uint, string>(
-								agentsWithFreshFacts[a].Identity,
-								factWithMessage.Item2
-							)
-						);
+						lock (ReadyMsgs)
+						{
+							ReadyMsgs.Add(
+								new Tuple<uint, string>(
+									agents[a].Identity,
+									agents[a].SayHello().Item2
+								)
+							);
+						}
 					}
-					DistributeNewFact(factWithMessage.Item1, agentsWithFreshFacts[a].Identity - 1);
+				}
+				else
+				{
+					agentsWithFreshFacts = GetAgentsWithFreshFacts();
+					while (
+						agentsWithFreshFacts.Length < 1
+						&& (!cancToken.HasValue || !cancToken.Value.IsCancellationRequested)
+					)
+					{
+						LetAgentsThinkInAdvance(thinkingReps, cancToken);
+						agentsWithFreshFacts = GetAgentsWithFreshFacts();
+					}
+					for (int a = 0; a < agentsWithFreshFacts.Length; ++a)
+					{
+						factWithMessage = factWithMessage == null ?
+							agentsWithFreshFacts[a].ChooseFactAndSpeak(null)
+							: agentsWithFreshFacts[a].ChooseFactAndSpeak(factWithMessage.Item1);
+						lock (ReadyMsgs)
+						{
+							ReadyMsgs.Add(
+								new Tuple<uint, string>(
+									agentsWithFreshFacts[a].Identity,
+									factWithMessage.Item2
+								)
+							);
+						}
+						DistributeNewFact(factWithMessage.Item1, agentsWithFreshFacts[a].Identity - 1);
+					}
 				}
 				this.Progress = (int)(++i * 100.0 / iterations);
 			}

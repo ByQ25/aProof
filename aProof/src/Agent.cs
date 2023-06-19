@@ -385,6 +385,11 @@ namespace aProof
 			return new HashSet<ProvenPacket>(this.facts.Except(usedFacts));
 		}
 
+		public Tuple<ProvenPacket, string> SayHello()
+		{
+			return new Tuple<ProvenPacket, string>(new ProvenPacket(), msgFormatter.PrepareMessage());
+		}
+
 		public Tuple<ProvenPacket, string> ChooseFactAndSpeak(ProvenPacket? previousFact)
 		{
 			ProvenPacket chosenFact = new ProvenPacket();
@@ -412,9 +417,7 @@ namespace aProof
 			}
 			else
 				chosenFact = stillFreshFacts.ElementAt(rng.Next(numberOfFreshFacts));
-			message = usedFacts.Count == 0 ?
-				msgFormatter.PrepareMessage() :
-				msgFormatter.PrepareMessage(chosenFact, areFactsSimilar);
+			message = msgFormatter.PrepareMessage(chosenFact, areFactsSimilar);
 			this.usedFacts.Add(chosenFact);
 			return new Tuple<ProvenPacket, string>(chosenFact, message);
 		}
