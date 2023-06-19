@@ -92,6 +92,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="UML-CD.cd" />
     <None Include="packages.config" />
     <None Include="SimulationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

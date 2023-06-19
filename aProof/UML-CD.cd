@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="aProof.controls.MessageBox">
+    <Position X="13" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAADAAAAAAAACAAAACAAAAAAEAABAAIQAAAAA=</HashCode>
+      <FileName>controls\MessageBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.MainForm">
+    <Position X="10.5" Y="0.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AFEEEFI2VCAQAmgYABGBEFwDEIGFhLTAAACaBBgAAgA=</HashCode>
+      <FileName>forms\MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.SimulationSettings">
+    <Position X="13" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAAIAAAAAAAAIAAAIBAAAAABApIAAADAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.Agent">
+    <Position X="6" Y="0.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="aProof.Agent.ExpressionType">
+        <TypeIdentifier>
+          <NewMemberFileName>src\Agent.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="aProof.Agent.ExpressionComplexity">
+        <TypeIdentifier>
+          <NewMemberFileName>src\Agent.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="aProof.Agent.AgentException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\Agent.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>JQ1EBEiBQAAAAADBBAQECBBEAAEAAAFAEGAEEQIQQAA=</HashCode>
+      <FileName>src\Agent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.AProofMain">
+    <Position X="1.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>src\AProofMain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.DictHandler">
+    <Position X="3.75" Y="6" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="aProof.DictHandler.DictHandlerException">
+        <TypeIdentifier>
+          <NewMemberFileName>src\DictHandler.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QAAIQAAABAAAAAAEICAQAAAEAggACAAAAAAAEAAAAAA=</HashCode>
+      <FileName>src\DictHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.Environment">
+    <Position X="3.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAAACCAAA0AAAQAIAAAAAAAEgAAABAAAAICAAgCiAAA=</HashCode>
+      <FileName>src\Environment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.ProverHelper">
+    <Position X="8.25" Y="0.5" Width="2" />
+    <NestedTypes>
+      <Class Name="aProof.ProverHelper.ProverHelperException" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\ProverHelper.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEACAEAIAAAAAAACQAACAAAAAQAAAAAAA=</HashCode>
+      <FileName>src\ProverHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.ProverOutputProcessor" BaseTypeListCollapsed="true">
+    <Position X="8.25" Y="7.25" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="aProof.ProverOutputProcessor.ProofSection" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\ProverOutputProcessor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAEAABBAEQIAAAAAAEgAACAAACgAIAAAgAAA=</HashCode>
+      <FileName>src\ProverOutputProcessor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" Collapsed="true" />
+  </Class>
+  <Class Name="aProof.Properties.Resources">
+    <Position X="15.5" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAEAAQAEAAAABBAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.src.CustomErrorHandler">
+    <Position X="15.5" Y="3" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="aProof.src.CustomErrorHandler.LogLevel" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>src\CustomErrorHandler.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAEAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\CustomErrorHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.src.MessageFormatter">
+    <Position X="1.75" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAACAACCgAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\MessageFormatter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aProof.src.PropTranslator">
+    <Position X="15.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAQAAAAAAAAAAAEAAAAAAAACAAAAAAAAQAAAAA=</HashCode>
+      <FileName>src\PropTranslator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="aProof.ProvenPacket">
+    <Position X="1.75" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AQCBAgAAAAAAAAAEgEAAAAAAAAAAAIAgAAAAAAAAAAA=</HashCode>
+      <FileName>src\ProvenPacket.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="aProof.IProverOutputProcessor">
+    <Position X="8.25" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAEAABBAEAIAAAAAAEgAACAAACgAAAAAgAAA=</HashCode>
+      <FileName>src\IProverOutputProcessor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
