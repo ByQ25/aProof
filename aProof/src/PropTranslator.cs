@@ -59,7 +59,7 @@ namespace aProof.src
 			}
 			if (!workingDict.TryGetValue(prop, out output))
 				output = prop;
-			return output.Replace(":newli:", "\n");
+			return output.TrimEnd('\r').Replace(":newli:", "\n");
 		}
 
 		public static string TranslateProp(string prop)
