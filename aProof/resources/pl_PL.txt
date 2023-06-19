@@ -14,3 +14,7 @@ prop.settings.messagebox.text=Aplikacja musi zostać zrestartowana w celu wczyta
 prop.settings.messagebox.title=Akcja wymaga restartu
 prop.label.saving_conversation_instruction=Ctrl + S - zapisze rozmowę
 prop.input.textbox.message=Chcąc utworzyć pakiet założeń i celów, który zostanie przydzielony do jednego z agentów przed rozpoczęciem symulacji należy wpisać je w tym polu, a następnie zapisać przyciskiem.:newli:Treść wyrażeń musi być zgodna z ustawionym słownikiem i formatem danych wejściowych aplikacji 'Prover9'. Można zadać dowolną liczbę pakietów, ale trzeba je definiować pojedynczo.:newli:Jeden wiersz reprezentuje pojedyncze założenie lub cel. Najpierw należy wpisać założenia, a później cele, przy czym jedne od drugich musi oddzielać przynajmniej jeden pusty wiersz. Przykład poniżej::newli::newli:Pada -> Mokro.:newli:Pada.:newli::newli:Mokro.
+prop.input.messagebox.text.saved=Zapisano wprowadzony pakiet założeń i celów na liście. Po uruchomieniu zadania zostanie przekazany jednemu z agentów.
+prop.input.messagebox.text.saved.title=Sukces
+prop.input.messagebox.text.rejected=Wprowadzone dane nie zgadzają się z wczytanym słownikiem. Wprowadż wyrażenia zgodne ze słownikiem lub wyczyść pole i użyj przycisku zapisu ponownie.
+prop.input.messagebox.text.rejected.title=Niepowodzenie

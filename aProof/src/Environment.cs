@@ -117,6 +117,20 @@ namespace aProof
 			}
 		}
 
+		public bool VerifyInputWithLoadedDictionary(string input)
+		{
+			if (this.dictionary == null)
+				return false;
+			return this.dictionary.ValidateInputAgainstDictionary(input);
+		}
+
+		public void DistributeSuggestedInput(List<string[][]> suggestedAssumAndGoals)
+		{
+			Random rng = new Random();
+			foreach (string[][] suggestion in suggestedAssumAndGoals)
+				agents[rng.Next(agents.Length)].TakeSuggestion(suggestion[0], suggestion[1]);
+		}
+
 		public void LetAgentsThinkInAdvance(uint iterations, CancellationToken? cancToken)
 		{
 			Thread[] threads = new Thread[this.agents.Length];

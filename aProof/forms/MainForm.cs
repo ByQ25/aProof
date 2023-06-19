@@ -19,6 +19,7 @@ namespace aProof
 		private Task currentTask;
 		private Random rng;
 		private readonly Environment env;
+		private readonly List<string[][]> usrInput;
 		private CancellationTokenSource cancTokenSrc;
 		private readonly List<Tuple<uint, string>> ReadyMsgs;
 		private Color[] availableChatBubbleColors;
@@ -50,6 +51,7 @@ namespace aProof
 					throw;
 				System.Environment.Exit(-665);
 			}
+			this.usrInput = new List<string[][]>();
 			this.ReadyMsgs = this.env.ReadyMsgs;
 			this.availableChatBubbleColors = new Color[] {
 				Color.HotPink, Color.OrangeRed, Color.Lime, Color.Khaki,
@@ -179,6 +181,40 @@ namespace aProof
 						sw.WriteLine(string.Format("Agent {0}:\n{1}\n", msg.Item1, msg.Item2));
 		}
 
+		private bool SaveUserInput(string rawUsrInput)
+		{
+			bool
+				wasInputAccepted = false,
+				assumOrGoals = true;
+			List<string>
+				assumptions = new List<string>(),
+				goals = new List<string>();
+			if (rawUsrInput.Length > 0 && this.env.VerifyInputWithLoadedDictionary(rawUsrInput))
+			{
+				foreach (string expr in rawUsrInput.Split('\n'))
+				{
+					if (expr.Length == 0)
+						assumOrGoals = !assumOrGoals;
+					else if (assumOrGoals)
+						assumptions.Add(expr[expr.Length - 1] == '.' ? expr : expr + ".");
+					else
+						goals.Add(expr[expr.Length - 1] == '.' ? expr : expr + ".");
+				}
+				this.usrInput.Add(new string[][] { assumptions.ToArray(), goals.ToArray() });
+				wasInputAccepted = true;
+			}
+			return wasInputAccepted;
+		}
+
+		private void ProcessUserInput()
+		{
+			if (this.usrInput.Count > 0)
+			{
+				env.DistributeSuggestedInput(usrInput);
+				this.usrInput.Clear();
+			}
+		}
+
 		private void PrepareContentPanel()
 		{
 			contentPanel.Controls.Clear();
@@ -197,6 +233,7 @@ namespace aProof
 			}
 			else
 			{
+				ProcessUserInput();
 				PrepareContentPanel();
 				availableChatBubbleColors = availableChatBubbleColors.OrderBy(i => rng.Next()).ToArray();
 				StartWorkingThread(
@@ -222,6 +259,7 @@ namespace aProof
 			}
 			else
 			{
+				ProcessUserInput();
 				PrepareContentPanel();
 				StartWorkingThread(
 					env.LetAgentsThinkInAdvance,
@@ -236,10 +274,32 @@ namespace aProof
 		{
 			if(isWorkingModeOn)
 			{
-				// TODO: Save input
-				this.contentPanel.Controls.Remove(inputRTB);
-				this.instructionLabel.Visible = true;
-				TurnOffWorkInProgressMode();
+				bool wasInputAccepted = SaveUserInput(inputRTB.Text);
+				if (
+					inputRTB.Text.Length == 0
+					|| inputRTB.Text == src.PropTranslator.TranslateProp("prop.input.textbox.message")
+					|| (inputRTB.Text != src.PropTranslator.TranslateProp("prop.input.textbox.message")
+						&& wasInputAccepted)
+				)
+				{
+					this.contentPanel.Controls.Remove(inputRTB);
+					this.instructionLabel.Visible = true;
+					TurnOffWorkInProgressMode();
+					if (wasInputAccepted)
+						MessageBox.Show(
+							src.PropTranslator.TranslateProp("prop.input.messagebox.text.saved"),
+							src.PropTranslator.TranslateProp("prop.input.messagebox.text.saved.title"),
+							MessageBoxButtons.OK,
+							MessageBoxIcon.Information
+						);
+				}
+				else
+					MessageBox.Show(
+						src.PropTranslator.TranslateProp("prop.input.messagebox.text.rejected"),
+						src.PropTranslator.TranslateProp("prop.input.messagebox.text.rejected.title"),
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning
+					);
 			}
 			else
 			{

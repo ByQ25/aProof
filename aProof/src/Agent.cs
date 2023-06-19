@@ -360,6 +360,16 @@ namespace aProof
 			}
 		}
 
+		public void TakeSuggestion(string[] suggestedAssumptions, string[] suggestedGoals)
+		{
+			if (suggestedAssumptions.Count() > 0)
+				foreach (string assumption in suggestedAssumptions)
+					AddAssumptionOrGoal(assumption, DetrmineExpressionComplexity(assumption), ExpressionType.Assumptions);
+			if (suggestedGoals.Count() > 0)
+				foreach (string goal in suggestedGoals)
+					AddAssumptionOrGoal(goal, DetrmineExpressionComplexity(goal), ExpressionType.Goals);
+		}
+
 		public void AddExternalKnownFact(ProvenPacket factToAdd, bool wasUsed)
 		{
 			foreach (string assumption in factToAdd.Assumptions)
